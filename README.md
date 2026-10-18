@@ -33,8 +33,10 @@ El video de apertura ya está incluido dentro de `index.html` (no hace falta nin
 
 Los datos (meses, turnos, jefes, preferencias) se guardan en el navegador de cada dispositivo. **No viajan solos entre dispositivos ni desde el archivo que usabas antes.** Para pasarlos:
 
-1. En el lugar donde ya tenés los datos, tocá el ícono de **Copia de seguridad** (el cilindro) → **Exportar**. Se descarga un archivo `jefes_datos_AAAA-MM-DD.json`.
-2. En la app publicada, el mismo ícono → **Importar…** y elegí ese archivo.
+1. En el lugar donde ya tenés los datos, tocá el botón **JSON** → *Todo* → **Exportar JSON**. Se descarga `jefes_datos_AAAA-MM-DD.json`.
+2. En la app publicada, botón **JSON** → **Importar JSON…** y elegí ese archivo. *Combinar* agrega/actualiza los meses del archivo; *Reemplazar todo* deja exactamente lo del archivo. Antes de importar se descarga sola una copia de lo que había.
+
+También podés exportar **solo el mes** que estás viendo (por ejemplo, para mandárselo a otra persona).
 
 Conviene exportar una copia de vez en cuando como resguardo.
 
