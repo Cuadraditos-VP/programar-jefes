@@ -1,6 +1,6 @@
 // Service worker de Programación Jefes: permite abrir la app sin internet.
 // Al publicar una versión nueva, cambiá VERSION para que los celulares la actualicen.
-const VERSION = "jefes-v1.1";
+const VERSION = "jefes-v3.2";
 const ARCHIVOS = ["./", "./index.html", "./manifest.json",
   "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-maskable-512.png", "./icons/apple-touch-icon.png"];
 

@@ -106,13 +106,30 @@
   .tsep{width:1px;height:24px;background:#B9AC8E;margin:0 4px}
   .btnreg{height:34px;padding:0 16px;border:0;border-radius:999px;background:var(--accent);color:#fff;font:700 12.5px Inter,Arial,sans-serif;letter-spacing:.3px;cursor:pointer}
   .btnreg:hover{filter:brightness(1.12)}
+  /* botones que cambian de texto: mismo tamaño en las dos hojas para que nada se mueva */
+  .regtog{width:104px;justify-content:center}
+  .btnreg{width:140px;text-align:center}
+  body.solo-actual:not(.view-pref) #btnDatos, body.solo-actual:not(.view-pref) #btnJefes, body.solo-actual:not(.view-pref) #btnPref, body.solo-actual:not(.view-pref) #sepPref{visibility:hidden}
+  body.edit-orig .btnreg{background:#C00000}
+  .btnreg:disabled{background:#D8CAAB;color:#5C5240;cursor:default;filter:none}
   .tog:disabled{opacity:.45;cursor:default}
-  .regstate{font-size:11.5px;color:#5C5240;font-weight:600;margin-right:2px}
+  .regstate{font-size:11.5px;color:#5C5240;font-weight:600;margin-right:2px;border:0;background:transparent;cursor:pointer;padding:4px 6px;border-radius:6px;font-family:inherit}
+  .regstate:hover{background:#D8CAAB}
+  .regstate:empty{display:none}
+  .regstate u{color:var(--cmp);text-decoration:underline}
+  #origBar{display:none;margin:0 0 8px;padding:8px 12px;border-radius:10px;background:#3B1D63;color:#fff;font-size:13px;align-items:center;gap:10px;justify-content:space-between}
+  #origBar b{letter-spacing:1px}
+  #origBar button{height:28px;padding:0 12px;border:0;border-radius:7px;background:#fff;color:#3B1D63;font:700 12px Inter,Arial,sans-serif;cursor:pointer}
+  /* la vista del original se ve igual que la planilla: sin barras ni bordes extra */
   .regstate b{color:var(--ink)}
   /* cambios respecto del original */
-  .grid td.cambio{position:relative;box-shadow:inset 0 0 0 3px var(--cmp) !important}   /* el cambio respecto del original manda sobre el ámbar */
-  .grid td.cambio::after{content:"";position:absolute;top:0;right:0;border-top:11px solid var(--cmp);border-left:11px solid transparent}
-  .grid th.dh.cambio{box-shadow:inset 0 0 0 2px var(--cmp)}
+  /* casillero modificado respecto del original: solo una pestañita discreta en la esquina */
+  #roToast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#1B2430;color:#fff;font:600 12.5px Inter,Arial,sans-serif;padding:8px 14px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:999}
+  #roToast.on{opacity:.92}
+  .grid td.cambio{position:relative}
+  .grid td.cambio::after{content:"";position:absolute;top:0;right:0;border-top:7px solid var(--cmp);border-left:7px solid transparent;pointer-events:none}
+  .grid th.dh.cambio{position:relative}
+  .grid th.dh.cambio::after{content:"";position:absolute;top:0;right:0;border-top:7px solid var(--cmp);border-left:7px solid transparent;pointer-events:none}
   #jefesPanel{width:370px;font-size:13px;padding:12px}
   .jp-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
   .jp-h b{font-size:14px}
@@ -152,6 +169,8 @@
   .ap-row{display:flex;justify-content:flex-end;gap:8px}
   .ap-row button,.ap-res-row button{height:32px;padding:0 14px;border-radius:8px;font:700 12px Inter,Arial,sans-serif;cursor:pointer;border:1px solid #C3CCD7;background:#fff}
   .ap-row .go,.ap-res-row .go{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .ap-man{font-size:12px;color:#7A4B00;background:#FFF4D6;border:1px solid #F3D48A;border-radius:8px;padding:6px 8px;margin:-4px 0 10px;line-height:1.4}
+  .ap-man:empty{display:none}
   .ap-ok{color:#1E7B3A;font-weight:700;margin:4px 0 8px}
   .ap-warn{color:#B45309;font-weight:700;margin:4px 0 6px}
   .ap-list{margin:0 0 10px;padding-left:18px;max-height:160px;overflow:auto;font-size:12px;line-height:1.45;color:#444}
@@ -163,6 +182,25 @@
   #datosPop .ap-row{margin-top:6px}
   .jsonbtn{gap:6px}
   #regConfirm{width:270px;font-size:13px}
+  #regMenu{width:300px;font-size:13px}
+  #regCorr{width:300px;font-size:13px}
+  #regCorr .rm-h{font-weight:800;margin-bottom:6px}
+  #regCorr p{margin:0 0 8px;color:#5C5240}
+  #regCorr .rc-op{display:block;width:100%;text-align:left;padding:9px 11px;margin:0 0 8px;border:1px solid #C3CCD7;border-radius:9px;background:#fff;cursor:pointer;font:600 13px Inter,Arial,sans-serif;color:var(--ink)}
+  #regCorr .rc-op:hover{border-color:var(--accent);background:#F4F7FB}
+  #regCorr .rc-op small{display:block;font-weight:500;color:#6B7685;margin-top:2px}
+  #regCorr .row{display:flex;justify-content:flex-end}
+  #regCorr .row button{height:32px;padding:0 12px;border-radius:8px;font:700 12px Inter,Arial,sans-serif;cursor:pointer;border:1px solid #C3CCD7;background:#fff}
+  #regMenu .rm-h{font-weight:800;margin-bottom:8px}
+  #regMenu .rm-op{display:flex;gap:8px;align-items:flex-start;padding:6px 4px;border-radius:8px;cursor:pointer;line-height:1.3}
+  #regMenu .rm-op:hover{background:#F2EEE4}
+  #regMenu .rm-op input{margin-top:3px}
+  #regMenu small{color:#6B7685}
+  #regMenu #rmClave{width:100%;box-sizing:border-box;height:34px;margin:8px 0 4px;padding:0 10px;border:1px solid #C3CCD7;border-radius:8px;font:600 14px Inter,Arial,sans-serif;letter-spacing:3px}
+  #regMenu #rmMsg{margin:0 0 8px;min-height:16px;color:#C00000;font-size:12px;font-weight:600}
+  #regMenu .row{display:flex;gap:8px;justify-content:flex-end}
+  #regMenu button{height:32px;padding:0 12px;border-radius:8px;font:700 12px Inter,Arial,sans-serif;cursor:pointer;border:1px solid #C3CCD7;background:#fff}
+  #regMenu button.ok{background:var(--accent);color:#fff;border-color:var(--accent)}
   #regConfirm p{margin:0 0 10px;line-height:1.4}
   #regConfirm .row{display:flex;gap:8px;justify-content:flex-end}
   #regConfirm button{height:32px;padding:0 12px;border-radius:8px;font:700 12px Inter,Arial,sans-serif;cursor:pointer;border:1px solid #C3CCD7;background:#fff}
@@ -328,10 +366,10 @@
     <div class="ptitle"><h1>JEFES <span>· PREFERENCIAS DE HORARIO</span></h1></div>
     </div>
     <div class="toolbar">
-      <button class="btnauto" id="btnAuto" title="Programar el mes automáticamente"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8l1.4 1.4M17.8 6.2l1.4-1.4M12.2 6.2l-1.4-1.4"/><path d="M3 21l9-9"/></svg>Programar</button>
-      <span class="regstate" id="regState"></span>
+      <button class="btnauto" id="btnAuto" title="Programar automáticamente lo que falta del mes"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8l1.4 1.4M17.8 6.2l1.4-1.4M12.2 6.2l-1.4-1.4"/><path d="M3 21l9-9"/></svg>Programar</button>
+      <button class="tog regtog" id="regState" aria-pressed="false" title="Alternar entre la planilla actual y el original registrado"><span class="dot"></span><span id="regTxt">Original</span></button>
       <button class="btnreg" id="btnReg" title="Guardar la programación actual como ORIGINAL">Registrar</button>
-      <button class="tog cmp" id="togC" aria-pressed="false" title="Comparar con el original registrado"><span class="dot"></span><span id="togCtxt">Comparar</span></button>
+      <button class="tog cmp" id="togC" aria-pressed="false" style="display:none"><span class="dot"></span><span id="togCtxt">Comparar</span></button>
       <span class="tsep"></span>
       <button class="tog" id="togV" aria-pressed="true" title="Mostrar u ocultar el resumen por jefe"><span class="dot"></span>Resumen</button>
       <button class="tog" id="togH" aria-pressed="true" title="Mostrar u ocultar los totales por día"><span class="dot"></span>Totales</button>
@@ -339,10 +377,11 @@
       <button class="iconbtn" id="btnShare" title="Compartir imagen PNG" aria-label="Compartir imagen"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
       <button class="tog jsonbtn" id="btnDatos" title="Exportar o importar los datos en un archivo JSON"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v12M3 12l4 4 4-4"/><path d="M17 20V8M13 12l4-4 4 4"/></svg>JSON</button>
       <button class="iconbtn" id="btnJefes" title="Agregar o quitar jefes" aria-label="Agregar o quitar jefes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M19 8v6M16 11h6"/></svg></button>
-      <span class="tsep"></span>
+      <span class="tsep" id="sepPref"></span>
       <button class="tog prefbtn" id="btnPref" title="Hoja de preferencias de horario de cada jefe"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span id="btnPrefTxt">Preferencias</span></button>
     </div>
   </header>
+  <div id="origBar"><span><b>ORIGINAL</b> registrado el <span id="origFecha"></span> · solo lectura</span><button id="origSalir">Volver a la planilla actual</button></div>
   <div class="card" id="gridCard"><table class="grid" id="grid"></table></div>
   <div class="card" id="prefCard"><table class="grid pref" id="prefGrid"></table></div>
 </div>
@@ -374,7 +413,8 @@
   <div class="dt-sec">Exportar</div>
   <label class="dt-op"><input type="radio" name="dtAlc" value="todo" checked> Todo (meses, jefes y preferencias)</label>
   <label class="dt-op"><input type="radio" name="dtAlc" value="mes"> Solo <b id="dtMesNom"></b></label>
-  <div class="ap-row"><button class="go" id="dtExp">Exportar JSON</button></div>
+  <div class="ap-row"><button class="go" id="dtExp">Exportar JSON</button> <button id="dtCopy">Copiar texto</button></div>
+  <p class="ap-p" style="margin:4px 0 0">En el iPhone, “Exportar” abre el menú Compartir: elegí <b>Guardar en Archivos</b> o mandalo directo a otra app.</p>
   <div class="dt-sec">Importar</div>
   <label class="dt-op"><input type="radio" name="dtModo" value="combinar" checked> Combinar: agrega o actualiza los meses del archivo y deja los demás</label>
   <label class="dt-op"><input type="radio" name="dtModo" value="reemplazar"> Reemplazar todo lo de este navegador</label>
@@ -390,18 +430,36 @@
   <div class="dp-f"><button id="dpOk">Listo</button></div>
 </div>
 <div class="pop" id="autoPanel">
-  <div class="ap-h">Programar <span id="apMes"></span><small id="apVer" style="float:right;font-size:10px;color:#9AA3AF;font-weight:600;margin-top:4px"></small></div>
+  <div class="ap-h">Programar <span id="apMes"></span></div>
   <div id="apBody">
-    <p class="ap-p">Completa los casilleros vacíos respetando lo que ya cargaste (francos, LAO, LIC, eventos y cualquier turno puesto a mano). Orden de prioridades:</p>
-    <ol class="ap-ol"><li>Cobertura mínima de cada día</li><li>Francos que le corresponden a cada jefe</li><li>Preferencias de cada jefe</li><li>Rotación: franco → NC → N → T → T1 → M → MD → franco</li></ol>
-    <label class="ap-ck"><input type="checkbox" id="apRehacer"> Rehacer: borrar antes lo que se programó automáticamente (lo que cargaste a mano se mantiene)</label>
-    <div class="ap-row"><button class="ap-no" id="apCancel">Cancelar</button><button class="go" id="apGo">Programar</button></div>
+    <p class="ap-p">Completa los casilleros vacíos. Lo que cargaste a mano se respeta y los días con evento no se tocan. Si a alguien le faltan francos, se los pone: un fin de semana (sábado y domingo juntos) y el resto repartido en el mes.</p>
+    <p class="ap-p">Prioridades: 1) antes del franco, el turno más temprano · 2) después del franco, el más tarde · 3) preferencias · 4) rotación de más tarde a más temprano · 5) parejas · 6) reparto parejo.</p>
+    <label class="ap-ck" id="apRehWrap"><input type="checkbox" id="apRehacer"> Rehacer: borrar antes lo que programó la vez anterior (lo cargado a mano se mantiene)</label>
+    <div class="ap-row"><button id="apCancel">Cancelar</button><button class="go" id="apGo">Programar</button></div>
   </div>
   <div id="apRes" style="display:none"></div>
 </div>
+<div id="roToast">Estás viendo el original · solo lectura</div>
+<div class="pop" id="regMenu">
+  <div class="rm-h">Opciones del registro</div>
+  <label class="rm-op"><input type="radio" name="rmAcc" value="reg" checked> <span><b>Volver a registrar</b><br><small>La planilla actual pasa a ser el nuevo original (se borran las pestañitas).</small></span></label>
+  <label class="rm-op"><input type="radio" name="rmAcc" value="corregir"> <span><b>Corregir el original</b><br><small>Habilita modificar el original. Al tocar el botón rojo “Registrar” elegís si a la planilla actual pasa solo lo corregido o todo el original, y el original vuelve a quedar congelado.</small></span></label>
+  <label class="rm-op"><input type="radio" name="rmAcc" value="todo"> <span><b>Borrar todo el original</b><br><small>Vacía todos los casilleros del original y lo deja abierto para volver a armarlo (podés usar Programar).</small></span></label>
+  <label class="rm-op"><input type="radio" name="rmAcc" value="parcial"> <span><b>Borrar el original menos francos, LIC y LAO</b><br><small>Vacía los turnos del original, deja F, 14F, LIC y LAO, y lo deja abierto para volver a armarlo.</small></span></label>
+  <input type="password" id="rmClave" inputmode="numeric" autocomplete="off" placeholder="Clave">
+  <p id="rmMsg"></p>
+  <div class="row"><button id="rmNo">Cancelar</button><button class="ok" id="rmOk">Aceptar</button></div>
+</div>
+<div class="pop" id="regCorr">
+  <div class="rm-h">Registrar la corrección</div>
+  <p>¿Qué pasa con la planilla actual?</p>
+  <button class="rc-op" id="rcSolo"><b>Copiar solo lo corregido</b><small>Los demás cambios de la actual se mantienen.</small></button>
+  <button class="rc-op" id="rcTodo"><b>Copiar todo el original</b><small>La actual queda igual al original: se pierden todos sus cambios.</small></button>
+  <div class="row"><button id="rcNo">Seguir corrigiendo</button></div>
+</div>
 <div class="pop" id="regConfirm">
   <p id="regMsg"></p>
-  <div class="row"><button id="regNo">Cancelar</button><button class="ok" id="regYes">Reemplazar original</button></div>
+  <div class="row"><button id="regNo">Cancelar</button><button class="ok" id="regYes">Registrar</button></div>
 </div>
 <div class="pop" id="cal">
   <div class="cal-h"><button class="arw sm" id="yPrev">&#8249;</button><b id="yLabel"></b><button class="arw sm" id="yNext">&#8250;</button></div>
@@ -412,7 +470,7 @@
 
 <script>
 window.addEventListener("error",e=>{ const b=document.getElementById("errBar"); if(b){ b.style.display="block"; b.textContent="Error: "+(e.message||e)+" (línea "+(e.lineno||"?")+")"; } });
-const VERSION="1.1 · 18/10/2026";
+const VERSION="3.2 · 19/10/2026";
 const DAYS = ["LU","MA","MI","JU","VI","SA","DO"];
 const MESES = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
 const MES_C = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
@@ -434,6 +492,36 @@ const COLORS = {
 };
 const CODES = ["M","T","T1","MD","N","NC","IN","F","14F","LAO","LIC",""];
 const BLOQUE = ["LAO","LIC"]; // códigos que se muestran agrupados en un solo bloque
+/* ---- turnos: códigos, pases prohibidos y preferencias (los usan las reglas, el ámbar y el programador) ---- */
+const TRAB=["MD","M","T","T1","N","NC"];
+const OFFF=["F","14F","LAO","LIC"];            // cuentan como franco (antes / después del franco)
+const LIBRE=["F","14F","LAO","LIC","IN"];      // días que no trabaja
+const LATE={MD:0,M:1,T1:2,T:3,N:4,NC:5};      // de más temprano a más tarde
+const SIN_NOCHE=["60457"];                     // ESPINOZA: nunca N ni NC (prescripción médica)
+const esNoche=s=>s==="N"||s==="NC";
+const t1Esperado = k => k>=4 ? Math.floor((k-2)/2) : 0;   // tarde: el 4.º va de T1, el 5.º de T, el 6.º de T1…
+// pases de un día al siguiente que no se pueden hacer
+function prohibido(a,b){
+  if(esNoche(a) && (b==="M"||b==="MD")) return true;
+  if(a==="NC" && (b==="T"||b==="T1"||OFFF.includes(b))) return true;
+  if(OFFF.includes(a) && (b==="M"||b==="MD")) return true;
+  return false;
+}
+// turnos que puede hacer p el día d: H = sin romper lo obligatorio · P = además dentro de sus preferencias
+function turnosPref(p,d){
+  let H=["M","T","T1","N","NC"]; if(esFinde(d)) H.unshift("MD");
+  if(SIN_NOCHE.includes(p.leg)) H=H.filter(s=>!esNoche(s));
+  const v=getPref(p.leg), fam=s=>s==="T1"?"T":s, en=(l,s)=>l.includes(fam(s)) || (esNoche(s) && l.some(esNoche));
+  let P=H.slice();
+  if(v.pre.length) P=P.filter(s=>en(v.pre,s));
+  const l=v.dias[dayAb(d)], noPuede=Array.isArray(l) && !l.length;
+  if(Array.isArray(l) && l.length) P=P.filter(s=>en(l,s));
+  P=P.filter(s=>!v.evi.includes(fam(s)));
+  return {H, P:(P.length && !noPuede)?P:H, noPuede};
+}
+const esFijoNoche=p=>{ const v=getPref(p.leg); return v.pre.length>0 && v.pre.every(esNoche); };
+// pareja (los dos se marcaron mutuamente): índice en people, o -1
+function parejaDe(i){ const p=people[i], l=getPref(p.leg).junto; if(!l) return -1; const j=people.findIndex(x=>x.leg===l); return (j>=0 && getPref(l).junto===p.leg) ? j : -1; }
 
 // Grupo 1 y Grupo 2 · legajo | nombre | turnos de septiembre 2025 (mes inicial; - = vacío)
 const GRUPO1 = [
@@ -499,12 +587,22 @@ if(prevV < 2 && STORE.meses["2025-09"]){
 }
 STORE.seedV=3;
 function persist(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(STORE)); }catch(e){} }
+let VER_ORIG=null, AMBAR=true, EDIT_ORIG=false;   // EDIT_ORIG: corrigiendo el original (habilitado con clave)
+const SOLO_LECT=()=>VER_ORIG && !EDIT_ORIG;   // mientras se mira el original, guarda lo actual para restaurarlo
 function save(){
+  if(VER_ORIG){                              // el original es solo lectura, salvo cuando se lo está corrigiendo
+    if(!EDIT_ORIG) return;
+    const mo=STORE.meses[keyOf(Y,MO)].orig; if(!mo) return;
+    people.forEach(p=>mo.t[p.leg]=p.t.slice(0,N_DAYS)); mo.fp=[...FP]; mo.fer=[...FER]; mo.evt=Object.fromEntries(EVT);
+    persist(); return;
+  }
   const k=keyOf(Y,MO), m=STORE.meses[k];
   people.forEach(p=>m.t[p.leg]=p.t.slice(0,N_DAYS));
   m.fp=[...FP]; m.fer=[...FER]; m.evt=Object.fromEntries(EVT); STORE.actual=k; persist();
 }
 function loadMonth(k){
+  if(EDIT_ORIG){ terminarCorreccion(); }
+  if(VER_ORIG){ people.forEach((p,i)=>p.t=VER_ORIG.t[i]); FP=VER_ORIG.fp; FER=VER_ORIG.fer; EVT=VER_ORIG.evt; COMPARE=VER_ORIG.cmp; VER_ORIG=null; document.body.classList.remove("ver-orig"); }
   [Y,MO]=parseKey(k); N_DAYS=new Date(Y,MO,0).getDate();
   const m=STORE.meses[k];
   if(!m.jefes) m.jefes = ROSTER_BASE.map(j=>({...j}));
@@ -520,8 +618,7 @@ function loadMonth(k){
   if(document.body.classList.contains("view-pref")) renderPrefs();
 }
 /* ---- REGISTRAR: guarda la programación como ORIGINAL para comparar ---- */
-let COMPARE=false;
-try{ COMPARE = localStorage.getItem("jefes_comparar")==="1"; }catch(e){}
+let COMPARE=true;   // las marcas de cambio se ven siempre que haya un original registrado
 const curMonth = () => STORE.meses[keyOf(Y,MO)];
 // valor original de un casillero (null si no hay que comparar)
 function origVal(p,d){
@@ -547,19 +644,19 @@ function registrar(){
   persist(); render();
 }
 function updateRegUI(){
-  const o=curMonth().orig, st=document.getElementById("regState"), tc=document.getElementById("togC");
+  const o=curMonth().orig, st=document.getElementById("regState"), br=document.getElementById("btnReg");
+  document.getElementById("btnAuto").style.display = ((!o && !VER_ORIG) || EDIT_ORIG) ? "" : "none";   // programar: antes de registrar o con el original abierto
+  st.style.display = o ? "" : "none";            // con original: botón para alternar entre actual y original
+  br.disabled = !!o && !VER_ORIG;                 // registrado: congelado; desde la vista del original se abren las opciones (con clave)
+  if(!o){ br.textContent="Registrar"; br.title="Guardar la planilla actual como ORIGINAL (queda congelada)"; }
   if(o){
     const f=new Date(o.fecha), ff=f.toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit"})+" "+f.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",hour12:false});
-    st.innerHTML=`Original <b>${ff}</b>`;
-    tc.disabled=false;
-    const n=countChanges();
-    document.getElementById("togCtxt").textContent = `Comparar · ${n} ${n===1?"cambio":"cambios"}`;
-  } else {
-    st.textContent="";
-    tc.disabled=true;
-    document.getElementById("togCtxt").textContent="Comparar";
+    br.textContent = EDIT_ORIG ? "Registrar" : VER_ORIG ? "Opciones…" : `Registrado ${f.toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit"})}`;
+    br.title = VER_ORIG ? "Volver a registrar o borrar (pide clave)" : `Original registrado el ${ff} (congelado)`;
+        st.setAttribute("aria-pressed", !!VER_ORIG);
+    document.getElementById("regTxt").textContent = VER_ORIG ? "Original" : "Actual";
+    st.title = VER_ORIG ? `Estás en el original (${ff}). Tocá para pasar a la planilla actual` : `Estás en la planilla actual. Tocá para ver el original registrado el ${ff}`;
   }
-  tc.setAttribute("aria-pressed", COMPARE && !!o);
 }
 function createMonth(k){
   if(!STORE.meses[k]){
@@ -604,21 +701,19 @@ const REGLAS_DIA = {
   "MADRUGADA": (n,d) => esFinde(d) ? (n!==2 ? "Viernes, sábados, domingos y feriados: tiene que haber 2 MD" : "")
                                      : (n>0 ? "MD solo viernes, sábados, domingos y feriados" : ""),
   "MAÑANA":    n => n<2 || n>4 ? "Mañana: mínimo 2 y máximo 4" : "",
-  "TARDE":     (n,d) => { const t=countDay(d,["T"]), t1=countDay(d,["T1"]);
-                 if(t<3) return (t1 ? "Tarde: mínimo 3 T (sin 3 T no puede haber T1)" : "Tarde: mínimo 3 T")+` · hay ${t} T y ${t1} T1`;
-                 if(t1>1) return `Tarde: como máximo 1 T1 por día · hay ${t1} T1`;
-                 const noc=countDay(d,["N"])+countDay(d,["NC"]);
-                 if(t+t1>noc) return `Tarde: T + T1 no puede superar a N + NC · hay ${t+t1} de tarde y ${noc} de noche`;
+  "TARDE":     (n,d) => { const t=countDay(d,["T"]), t1=countDay(d,["T1"]), k=t+t1, e=t1Esperado(k);
+                 if(t<3) return `Tarde: mínimo 3 T · hay ${t} T y ${t1} T1`;
+                 if(t1!==e) return `Tarde: con ${k} de tarde corresponden ${e} T1 (el 4.º va de T1, el 5.º de T, el 6.º de T1) · hay ${t1}`;
                  return ""; },
   "NOCHE":     n => n<2 ? "Noche (N): mínimo 2" : "",
-  "NOCHE C":   n => n<2 || n>3 ? "Noche (NC): mínimo 2 y máximo 3" : ""
+  "NOCHE C":   n => n<2 || n>3 ? "Noche (NC): mínimo 2 y nunca más de 3" : ""
 };
 // Avisos suaves (en ámbar): lo ideal, no obligatorio
 const AVISOS_DIA = {
-  "MAÑANA":  n => n!==3 ? "Lo ideal son 3 de mañana (2 o 4 solo como excepción)" : "",
-  "TARDE":   (n,d) => (countDay(d,["T"])>=3 && countDay(d,["T1"])===0) ? "Lo ideal: 1 T1 por día" : "",
-  "NOCHE":   n => n!==3 ? "Lo ideal son 3 N" : "",
-  "NOCHE C": n => n!==3 ? "Lo ideal son 3 NC (2 solo en situación extrema)" : ""
+  "MAÑANA":  n => n!==3 ? "Lo ideal son 3 de mañana" : "",
+  "TARDE":   (n,d) => { const k=countDay(d,["T","T1"]), noc=countDay(d,["N","NC"]); return Math.abs(k-noc)>=2 ? `T + T1 (${k}) debería parecerse a N + NC (${noc})` : ""; },
+  "NOCHE":   n => n<3 ? "Lo ideal son 3 N" : "",
+  "NOCHE C": n => n<3 ? "Lo ideal son 3 NC" : ""
 };
 // Resumen por jefe: francos del mes (enero, febrero y marzo: 6; resto: 6 si el mes tiene 30 días, 7 si tiene 31)
 const francosMes = () => MO<=3 ? 6 : (N_DAYS===31 ? 7 : 6);
@@ -691,28 +786,51 @@ function imprimir(){
 function avisosCelda(p,d){
   const t=p.t, c=t[d-1], prev=d>1?t[d-2]:"", next=d<N_DAYS?t[d]:"", out=[];
   if(EVT.has(d) || !c) return out;
-  const noche=x=>x==="N"||x==="NC", man=x=>x==="M"||x==="MD", fr=x=>x==="F"||x==="14F";
-  if(noche(prev) && man(c)) out.push(`Descanso: ${prev} → ${c}`);
-  if(prev==="NC" && c==="T1") out.push("Descanso: NC → T1");
-  if(prev==="NC" && c==="T") out.push("NC → T (mejor NC → N → T)");
-  if(c==="NC" && (fr(next) || BLOQUE.includes(next))) out.push(`NC antes de ${next}`);
-  if(fr(prev) && c==="MD") out.push("F → MD");
-  if(c==="MD" && !esFinde(d)) out.push("MD fuera de viernes, sábado, domingo o feriado");
-  // pareja separada
-  const v=getPref(p.leg);
-  if(v.junto){ const q=people.find(x=>x.leg===v.junto); if(q && getPref(q.leg).junto===p.leg && q.t[d-1] && q.t[d-1]!==c && !BLOQUE.includes(c) && !BLOQUE.includes(q.t[d-1])) out.push(`Separado de ${q.nom} (${q.t[d-1]})`); }
+  if(prev && !EVT.has(d-1) && prohibido(prev,c)) out.push(`Pase no permitido: ${prev} → ${c}`);
+  if(!TRAB.includes(c)) return out;
+  if(SIN_NOCHE.includes(p.leg) && esNoche(c)) out.push(`${p.nom} no puede hacer ${c} (prescripción médica)`);
+  const i=people.indexOf(p), tp=turnosPref(p,d);
+  // ¿se podía cambiar con q ese día sin romper nada obligatorio?
+  const cambiable=q=>{ const b=q.t[d-1]; if(!TRAB.includes(b)) return false;
+    const qp=d>1?q.t[d-2]:"", qn=d<N_DAYS?q.t[d]:"";
+    return tp.P.includes(b) && turnosPref(q,d).P.includes(c)
+      && !(prev && prohibido(prev,b)) && !(next && prohibido(b,next)) && !(qp && prohibido(qp,c)) && !(qn && prohibido(c,qn)); };
+  if(OFFF.includes(next)){
+    const q=people.find(q=>q!==p && TRAB.includes(q.t[d-1]) && LATE[q.t[d-1]]<LATE[c] && !OFFF.includes(d<N_DAYS?q.t[d]:"") && cambiable(q));
+    if(q) out.push(`Antes del franco debería tener el turno más temprano (${q.nom} tiene ${q.t[d-1]})`);
+  }
+  if(OFFF.includes(prev)){
+    const q=people.find(q=>q!==p && TRAB.includes(q.t[d-1]) && LATE[q.t[d-1]]>LATE[c] && !OFFF.includes(d>1?q.t[d-2]:"") && cambiable(q));
+    if(q) out.push(`Después del franco debería entrar lo más tarde posible (${q.nom} tiene ${q.t[d-1]})`);
+  }
+  // rotación: dentro del tramo, de más tarde a más temprano (se marca el día en que vuelve atrás)
+  { let q=d-2; while(q>=0 && TRAB.includes(t[q])) q--;
+    let mn=9, desde="";
+    const salto=(x)=>{ const s=t[x], pv=x>0?t[x-1]:"", minP=Math.min(...turnosPref(p,x+1).P.map(z=>LATE[z]));
+      return LATE[s]>Math.max(mn,minP) && !(esFijoNoche(p) && esNoche(s) && esNoche(pv)); };
+    for(let x=q+1; x<d-1; x++){ if(salto(x)){ mn=LATE[t[x]]; desde=t[x]; } else if(LATE[t[x]]<mn){ mn=LATE[t[x]]; desde=t[x]; } }
+    if(salto(d-1)) out.push(`Rotación hacia atrás: ya hizo ${desde} y vuelve a ${c} antes del franco`); }
+  // pareja
+  const j=parejaDe(i);
+  if(j>=0){ const b=people[j].t[d-1];
+    if(TRAB.includes(b) && b!==c) out.push(`Separado de ${people[j].nom} (${b})`);
+    else if(b==="F") out.push(`${people[j].nom} está de franco`); }
   return out;
 }
 // turno fuera de lo que prefiere el jefe (se marca en ámbar en la grilla)
-function fueraPref(p,c){
-  if(!["MD","M","T","T1","N","NC"].includes(c)) return "";
-  const v=getPref(p.leg), sp=c==="T1"?"T":c;
+function fueraPref(p,c,d){
+  if(!TRAB.includes(c)) return "";
+  const v=getPref(p.leg), sp=c==="T1"?"T":c, en=l=>l.includes(sp) || (esNoche(sp) && l.some(esNoche));
   if(v.evi.includes(sp)) return `${p.nom} evita ${sp}`;
-  const noche=x=>x==="N"||x==="NC";
-  if(v.pre.length && !v.pre.includes(sp) && !(noche(sp) && v.pre.some(noche))) return `Fuera de su preferencia (prefiere ${v.pre.join(", ")})`;   // N y NC cuentan juntas como noche
+  if(v.pre.length && !en(v.pre)) return `Fuera de su preferencia (prefiere ${v.pre.join(", ")})`;
+  if(d){ const l=v.dias[dayAb(d)]; if(Array.isArray(l)){ if(!l.length) return `Los ${dayAb(d)} no puede trabajar`; if(!en(l)) return `Los ${dayAb(d)} solo ${l.join(", ")}`; } }
   return "";
 }
 function render(){
+  // ámbar (situaciones no ideales): solo en el original, o mientras el mes todavía no se registró
+  AMBAR = !curMonth().orig || !!VER_ORIG;
+  // JSON, jefes y preferencias: solo en el original (o mientras el mes no está registrado)
+  document.body.classList.toggle("solo-actual", !AMBAR);
   let h = '<colgroup><col class="leg"><col class="nom">';
   for(let d=1; d<=N_DAYS; d++) h += '<col>';
   if(SHOW_V) h += '<col class="sp">' + '<col class="s">'.repeat(7) + '<col class="sp">' + '<col class="s">'.repeat(3);
@@ -751,8 +869,8 @@ function render(){
         }
         const [bg,fg]=COLORS[c]||COLORS[""];
         const o=origVal(p,d), chg = o!==null && o!==(c||"");
-        const fp = [fueraPref(p,c), ...avisosCelda(p,d)].filter(Boolean).join(" · ");
-        h += `<td class="cell ${dom(d)} ${chg?'cambio':''} ${fp?'fuera':''}" data-r="${r}" data-d="${d}" style="background:${bg};color:${fg}" ${chg?`title="Original: ${o||'vacío'}"`:(fp?`title="${fp}"`:'')}>${c}</td>`;
+        const fp = AMBAR ? [fueraPref(p,c,d), ...avisosCelda(p,d)].filter(Boolean).join(" · ") : "";
+        h += `<td class="cell ${dom(d)} ${chg?'cambio':''} ${fp?'fuera':''}" data-r="${r}" data-d="${d}" style="background:${bg};color:${fg}" ${fp?`title="${fp}"`:''}>${c}</td>`;
       }
       const {st,vsd}=stats(p);
       if(SHOW_V){
@@ -774,7 +892,7 @@ function render(){
     h += `<tr class="${cls}"><td class="lab" colspan="2">${lab}</td>`;
     for(let d=1; d<=N_DAYS; d++){
       const n=countDay(d,codes), msg = (!EVT.has(d) && REGLAS_DIA[lab]) ? REGLAS_DIA[lab](n,d) : "";
-      const av = (!msg && !EVT.has(d) && AVISOS_DIA[lab]) ? AVISOS_DIA[lab](n,d) : "";
+      const av = (AMBAR && !msg && !EVT.has(d) && AVISOS_DIA[lab]) ? AVISOS_DIA[lab](n,d) : "";
       h += `<td class="${dom(d)} ${msg?'alerta':''} ${av?'aviso':''}" ${msg?`title="${msg.includes(' · hay ')?msg:msg+' (hay '+n+')'}"`:(av?`title="${av} (hay ${n})"`:'')}>${n||''}</td>`;
     }
     h += `${auxTd('blank')}</tr>`;
@@ -820,6 +938,7 @@ function cellDay(td, clientX){
 /* ---- ARRASTRAR PARA REPETIR: clic sostenido en un casillero y arrastrar por la fila copia ese turno ---- */
 let drag=null, skipClick=false;
 grid.addEventListener("pointerdown",e=>{
+  if(SOLO_LECT()) return;
   if(e.pointerType==="touch" || e.button!==0) return;          // con mouse o lápiz
   const td=e.target.closest("td.cell"); if(!td) return;
   const r=+td.dataset.r, d=cellDay(td,e.clientX);
@@ -853,6 +972,7 @@ document.addEventListener("pointerup",()=>{
 });
 
 grid.addEventListener("click",e=>{
+  if(SOLO_LECT()) return;
   if(skipClick){ skipClick=false; return; }
   const td=e.target.closest("td.cell"); if(!td) return;
   let r=+td.dataset.r, d=cellDay(td,e.clientX);
@@ -899,7 +1019,7 @@ function confirmarBuf(){
   if(buf && CODIGOS.includes(buf)) escribir(buf); else { buf=""; marcarSel(); }
 }
 document.addEventListener("keydown",e=>{
-  if(!SEL || document.body.classList.contains("view-pref")) return;
+  if(!SEL || SOLO_LECT() || document.body.classList.contains("view-pref")) return;
   const tag=(e.target.tagName||"").toLowerCase(); if(tag==="input"||tag==="select"||tag==="textarea") return;
   if(e.ctrlKey||e.metaKey||e.altKey) return;
   const k=e.key;
@@ -934,6 +1054,7 @@ document.addEventListener("mousedown",e=>{ if(SEL && !e.target.closest("#grid") 
 const dm=document.getElementById("dayMenu"), dmFP=document.getElementById("dmFP"), dmFer=document.getElementById("dmFer"), dmEvt=document.getElementById("dmEvt"), dmEvtName=document.getElementById("dmEvtName");
 let dmDay=null;
 document.addEventListener("dblclick",e=>{
+  if(SOLO_LECT()) return;
   const el=e.target.closest("[data-day]"); if(!el) return;
   e.preventDefault(); window.getSelection().removeAllRanges();
   dmDay=+el.dataset.day;
@@ -1272,9 +1393,10 @@ document.getElementById("jpList").addEventListener("click",e=>{
   if(b.dataset.x){ jpConfirm=b.dataset.x; drawJefes(); }
   else if(b.dataset.no){ jpConfirm=null; drawJefes(); }
   else if(b.dataset.si){
+    const enOrig=!!VER_ORIG; if(enOrig) verOriginal(false);
     const m=curMonth(); save();
     m.jefes=(m.jefes||ROSTER_BASE).filter(j=>j.leg!==b.dataset.si);   // sus turnos quedan guardados por si se lo vuelve a agregar
-    jpConfirm=null; persist(); buildPeople(m); render(); drawJefes();
+    jpConfirm=null; persist(); buildPeople(m); render(); if(enOrig) verOriginal(true); drawJefes();
   }
 });
 function agregarJefe(){
@@ -1284,11 +1406,13 @@ function agregarJefe(){
   const g=+document.getElementById("jpGrp").value;
   if(!/^\d+$/.test(leg)){ msg.textContent="El legajo tiene que ser un número."; return; }
   if(!nom){ msg.textContent="Falta el nombre."; return; }
-  const m=curMonth(); save();
+  const m=curMonth();
+  if(m.jefes && m.jefes.some(j=>j.leg===leg)){ msg.textContent=`El legajo ${leg} ya está en la lista.`; return; }
+  const enOrig=!!VER_ORIG; if(enOrig) verOriginal(false);
+  save();
   if(!m.jefes) m.jefes=ROSTER_BASE.map(j=>({...j}));
-  if(m.jefes.some(j=>j.leg===leg)){ msg.textContent=`El legajo ${leg} ya está en la lista.`; return; }
   m.jefes.push({leg, nom, g});
-  persist(); buildPeople(m); render();
+  persist(); buildPeople(m); render(); if(enOrig) verOriginal(true);
   jpNuevo=leg; drawJefes(); msg.textContent="";
   document.getElementById("jpLeg").value=""; document.getElementById("jpNom").value=""; document.getElementById("jpLeg").focus();
   const it=document.querySelector("#jpList .jp-it.nuevo"); if(it) it.scrollIntoView({block:"nearest"});
@@ -1298,347 +1422,296 @@ document.getElementById("jpAdd").onclick=agregarJefe;
 document.addEventListener("mousedown",e=>{ if(jp.style.display==="block" && !jp.contains(e.target) && !e.target.closest("#btnJefes")) jp.style.display="none"; });
 
 /* ================= PROGRAMACIÓN AUTOMÁTICA =================
-   1) cobertura mínima por día  2) francos de cada jefe  3) preferencias  4) rotación F → NC → N → T → T1 → M → MD → F
-   Solo completa casilleros vacíos; lo cargado a mano (F, LAO, LIC, eventos, turnos) se respeta. */
-const TRAB=["MD","M","T","T1","N","NC"];
-const ROT=["NC","N","T","T1","M","MD"];
-// Asignación óptima (método húngaro) para n filas ≤ m columnas; devuelve columna asignada a cada fila
-function hungarian(cost){
-  const n=cost.length, m=cost[0].length, INF=1e15;
-  const u=new Array(n+1).fill(0), v=new Array(m+1).fill(0), pp=new Array(m+1).fill(0), way=new Array(m+1).fill(0);
+   Obligatorio (nunca se rompe, salvo que sea imposible):
+     · MD: 2 los viernes, sábados, domingos y feriados; ninguno los demás días
+     · M: mínimo 2, ideal 3, máximo 4
+     · Tarde: mínimo 3 T; el 4.º va de T1, el 5.º de T, el 6.º de T1…
+     · N y NC: mínimo 2 cada una, ideal 3 y 3; NC nunca más de 3
+     · T + T1 lo más parecido posible a N + NC
+     · Espinoza nunca de N ni NC (prescripción médica)
+     · Lo cargado a mano se respeta · los días con evento no se tocan
+     · Pases que no se pueden hacer: noche → M/MD, NC → T/T1, NC → franco, franco → M/MD
+   Prioridades (en este orden):
+     1. Antes del franco, el turno más temprano dentro de sus preferencias (MD, M, T1, T, N, NC)
+     2. Después del franco, el turno más tarde dentro de sus preferencias
+     3. Las preferencias
+     4. Rotación de más tarde a más temprano (no volver atrás dentro del mismo tramo; los fijos de noche alternan N y NC libremente)
+     5. Parejas: mismo turno y mismos francos
+     6. Reparto parejo de noches, tardes y mañanas entre los que hacen de todo
+   Francos que falten: un fin de semana (SA + DO juntos) y el resto repartido parejo en el mes. */
+const PG_W = { HARD:100000, PAREC:20000, IDEAL:3000, P1:400, P2:300, P3:200, P4:100, P5:40, P6:12 };
+const famDe = s => esNoche(s) ? "noche" : (s==="T"||s==="T1") ? "tarde" : "manana";
+
+// costo de los totales de un día (cnt: cantidades por turno)
+function pgCostoDia(cnt, fin){
+  const W=PG_W; let c=0;
+  const md=cnt.MD, m=cnt.M, t=cnt.T, t1=cnt.T1, n=cnt.N, nc=cnt.NC, k=t+t1, noc=n+nc;
+  c += (fin ? Math.abs(md-2) : md) * W.HARD;
+  if(m<2) c+=(2-m)*W.HARD; if(m>4) c+=(m-4)*W.HARD; c+=Math.abs(m-3)*W.IDEAL;
+  if(t<3) c+=(3-t)*W.HARD;
+  c += Math.abs(t1 - t1Esperado(k)) * W.HARD;
+  if(n<2) c+=(2-n)*W.HARD; if(nc<2) c+=(2-nc)*W.HARD; if(nc>3) c+=(nc-3)*W.HARD;   // NC: nunca más de 3
+  if(n<3) c+=(3-n)*W.IDEAL; if(nc<3) c+=(3-nc)*W.IDEAL;
+  const dif=Math.abs(k-noc); c += Math.max(0,dif-1)*W.PAREC + dif*500;
+  if(nc<3 && n>nc+1) c+=(n-nc-1)*300;
+  return c;
+}
+
+// Asignación óptima (método húngaro), n filas ≤ m columnas
+function pgHungaro(cost){
+  const n=cost.length, m=cost[0].length, INF=1e18;
+  const u=new Array(n+1).fill(0), v=new Array(m+1).fill(0), p=new Array(m+1).fill(0), way=new Array(m+1).fill(0);
   for(let i=1;i<=n;i++){
-    pp[0]=i; let j0=0; const minv=new Array(m+1).fill(INF), used=new Array(m+1).fill(false);
+    p[0]=i; let j0=0; const minv=new Array(m+1).fill(INF), used=new Array(m+1).fill(false);
     do{
-      used[j0]=true; const i0=pp[j0]; let delta=INF, j1=0;
+      used[j0]=true; const i0=p[j0]; let delta=INF, j1=0;
       for(let j=1;j<=m;j++) if(!used[j]){
         const cur=cost[i0-1][j-1]-u[i0]-v[j];
         if(cur<minv[j]){ minv[j]=cur; way[j]=j0; }
         if(minv[j]<delta){ delta=minv[j]; j1=j; }
       }
-      for(let j=0;j<=m;j++){ if(used[j]){ u[pp[j]]+=delta; v[j]-=delta; } else minv[j]-=delta; }
+      for(let j=0;j<=m;j++){ if(used[j]){ u[p[j]]+=delta; v[j]-=delta; } else minv[j]-=delta; }
       j0=j1;
-    } while(pp[j0]!==0);
-    do{ const j1=way[j0]; pp[j0]=pp[j1]; j0=j1; } while(j0);
+    } while(p[j0]!==0);
+    do{ const j1=way[j0]; p[j0]=p[j1]; j0=j1; } while(j0);
   }
-  const res=new Array(n).fill(-1); for(let j=1;j<=m;j++) if(pp[j]) res[pp[j]-1]=j-1;
+  const res=new Array(n).fill(-1); for(let j=1;j<=m;j++) if(p[j]) res[p[j]-1]=j-1;
   return res;
 }
-function rnd(seed){ return ()=>{ seed=(seed*1664525+1013904223)>>>0; return seed/4294967296; }; }
+function pgRnd(seed){ return ()=>{ seed=(seed*1664525+1013904223)>>>0; return seed/4294967296; }; }
 
-// casilleros que completó el programador (para "Rehacer"); al editarlos a mano dejan de serlo
-function manual(leg,d){ const m=curMonth(); if(m && m.auto && m.auto[leg]) m.auto[leg]=m.auto[leg].filter(x=>x!==d); }
-function autoProgramar(rehacer){
-  const N=N_DAYS, P=people, fReq=francosMes(), R=rnd(Y*100+MO);
-  const mes=curMonth();
-  const sinRegistro = !mes.auto || !Object.values(mes.auto).some(l=>l && l.length);
-  if(sinRegistro){          // mes programado antes de que se registrara qué hizo el programador: los turnos de trabajo se toman como automáticos
-    mes.auto={}; P.forEach(p=>{ mes.auto[p.leg]=[]; p.t.forEach((c,k)=>{ if(TRAB.includes(c)) mes.auto[p.leg].push(k+1); }); });
-  }
-  if(rehacer) P.forEach(p=>{ (mes.auto[p.leg]||[]).forEach(d=>{ p.t[d-1]=""; }); });
-  const antes=P.map(p=>p.t.slice());
-  const fin=d=>esFinde(d);
-  const fijo=P.map(p=>p.t.map(c=>c!==""));          // lo cargado a mano no se toca
-  const libre=(p,k)=> p.t[k]==="" && !EVT.has(k+1);
-  const esF=(p,k)=> esFranco(p.t[k],k);
-  const wd=k=>dayAb(k+1);
-  const demanda=d=>({MD:fin(d)?2:0, M:3, T:4, N:3, NC:3});   // objetivo diario: 3 M, 3 T + 1 T1, 3 N, 3 NC (+2 MD fin de semana/feriado)
-  const pf=P.map(p=>getPref(p.leg));
-  // reglas obligatorias por día de la semana
-  // peso de la rotación: a los jefes con turnos preferidos casi no se los rota (quedan en lo suyo)
-  const rotW=i=> pf[i].pre.length ? 0.25 : 1;
-  const prefPeso=(i,sh)=>{ const sp=sh==="T1"?"T":sh; let c=0;
-    const noche=x=>x==="N"||x==="NC";
-    const prefiere = pf[i].pre.includes(sp) || (noche(sp) && pf[i].pre.some(noche));   // N y NC cuentan juntas como "noche"
-    if(pf[i].pre.length) c+= prefiere ? -40 : 25;                         // lo que prefiere, bien adelante
-    if(pf[i].evi.includes(sp)) c+=60;                                      // lo que evita, casi nunca
-    return c; };
-  // parejas que van juntas (índice del compañero o -1)
-  const pareja=i=>{ const l=pf[i].junto; if(!l) return -1; const j=P.findIndex(x=>x.leg===l); return (j>=0 && getPref(l).junto===P[i].leg) ? j : -1; };
-  // el día antes del franco, cuanto más temprano termine el turno, mejor: MD < M < T1 < T < N
-  const antesFranco=sh=>({MD:0, M:8, T1:18, T:22, N:26}[sh] ?? 22);
-  const noPuede=(i,k)=>{ const l=pf[i].dias[wd(k)]; return Array.isArray(l) && l.length===0; };
-  const permitido=(i,k,sh)=>{ const l=pf[i].dias[wd(k)]; if(!Array.isArray(l)) return true; return l.includes(sh==="T1"?"T":sh); };
+function programarMes(rehacer){
+  const m=curMonth(), N=N_DAYS, P=people, R=pgRnd(Y*100+MO), W=PG_W;
+  if(!m.auto) m.auto={};
+  if(rehacer) P.forEach(p=>{ (m.auto[p.leg]||[]).forEach(d=>{ if(!EVT.has(d)) p.t[d-1]=""; }); });
+  const G=P.map(p=>{ const t=p.t.slice(0,N); while(t.length<N) t.push(""); return t; });
+  const antes=G.map(t=>t.slice());
+  const libreC=(i,k)=>antes[i][k]==="" && !EVT.has(k+1);          // casillero que el programa puede llenar
+  const fin=k=>esFinde(k+1);
+  const PR=P.map((p,i)=>Array.from({length:N},(_,k)=>{ const tp=turnosPref(p,k+1);
+    const Ls=tp.P.map(s=>LATE[s]); return {H:tp.H, P:tp.P, minL:Math.min(...Ls), maxL:Math.max(...Ls), noPuede:tp.noPuede}; }));
+  const FN=P.map(p=>esFijoNoche(p)), PJ=P.map((p,i)=>parejaDe(i));
+  // "hacen de todo": según sus preferencias pueden hacer noche y también turnos de día (no son fijos de noche)
+  const flexible=P.map((p,i)=>!FN[i] && PR[i].some(x=>x.P.some(esNoche)) && PR[i].some(x=>x.P.some(s=>!esNoche(s))));
+  const fReq=francosMes();
+  const movF=G.map(()=>new Array(N).fill(false));                 // francos puestos por el programa que se pueden correr
 
-  // ---------- Fase 1: francos ----------
-  const falta=P.map(p=>fReq - p.t.filter((c,k)=>esFranco(c,k)).length);
-  // cuántos jefes quedan libres para trabajar cada día frente a lo que hace falta cubrir
-  function holgura(k){
-    const d=k+1; if(EVT.has(d)) return 99;
-    const x=demanda(d); let disp=0;
-    P.forEach(p=>{ const c=p.t[k];
-      if(c==="") disp++;
-      else if(TRAB.includes(c)){ const key=c==="T1"?"T":c; if(x[key]>0) x[key]--; }
+  /* ---------- 1) Francos que falten ---------- */
+  const esLibreDia=(c)=>LIBRE.includes(c);
+  const offDia=k=>G.reduce((a,t)=>a+(esLibreDia(t[k])?1:0),0);
+  const minDot=k=>(fin(k)?2:0)+2+3+2+2;
+  const capOK=k=>P.length-offDia(k)-1>=minDot(k);
+  const francosDe=i=>G[i].filter((c,k)=>esFranco(c,k)).length;
+  const falta=P.map((p,i)=>{ if(!G[i].some((c,k)=>libreC(i,k))) return 0; return Math.max(0,fReq-francosDe(i)); });
+  // un franco en el día k no debe crear un pase prohibido con lo que ya está cargado
+  const fOK=(i,k)=>{ if(!libreC(i,k) || G[i][k]!=="") return false;
+    const a=k>0?G[i][k-1]:"", b=k<N-1?G[i][k+1]:"";
+    if(a && TRAB.includes(a) && prohibido(a,"F")) return false;
+    if(b && TRAB.includes(b) && prohibido("F",b)) return false;
+    return true; };
+  const ponF=(i,k)=>{ G[i][k]="F"; falta[i]--; };
+  // 1a) fin de semana: SA + DO juntos (las parejas, el mismo)
+  const findes=[]; for(let k=0;k<N-1;k++) if(dayAb(k+1)==="SA" && dayAb(k+2)==="DO" && !EVT.has(k+1) && !EVT.has(k+2)) findes.push(k);
+  const tieneFinde=i=>findes.some(k=>esLibreDia(G[i][k]) && esLibreDia(G[i][k+1]));
+  const orden=P.map((p,i)=>i).filter(i=>falta[i]>=2).sort((a,b)=>falta[b]-falta[a] || R()-.5);
+  const hechoF=new Set();
+  orden.forEach(i=>{
+    if(hechoF.has(i) || tieneFinde(i)) return;
+    const pj=PJ[i], grupo=(pj>=0 && falta[pj]>=2 && !tieneFinde(pj)) ? [i,pj] : [i];
+    let best=null, bs=1e9;
+    findes.forEach(k=>{
+      if(!grupo.every(x=>fOK(x,k) && fOK(x,k+1))) return;
+      if(P.length-offDia(k)-grupo.length<minDot(k) || P.length-offDia(k+1)-grupo.length<minDot(k+1)) return;
+      const sc=offDia(k)+offDia(k+1)+R()*0.5; if(sc<bs){ bs=sc; best=k; }
     });
-    return disp - (x.MD+x.M+x.T+x.N+x.NC);
-  }
-  const findeF=P.map(p=>p.t.filter((c,k)=>esFranco(c,k)&&["VI","SA","DO"].includes(wd(k))).length);
-  let guard=0;
-  while(falta.some(f=>f>0) && guard++<2000){
-    // el que más francos debe primero
-    const order=P.map((p,i)=>i).filter(i=>falta[i]>0).sort((a,b)=>falta[b]-falta[a] || R()-.5);
-    const i=order[0], p=P[i];
-    const promFinde=findeF.reduce((a,b)=>a+b,0)/P.length;
-    let best=-1, bestS=-1e9;
-    for(let k=0;k<N;k++){
-      if(!libre(p,k)) continue;
-      const h=holgura(k); if(h<=0 && !noPuede(i,k)) continue;
-      let sc=h*3;
-      if(noPuede(i,k)) sc+=40;                                             // días que no puede → franco
-      const pj=pareja(i); if(pj>=0){ if(P[pj].t[k]==="F") sc+=30; else if(!libre(P[pj],k)) sc-=10; }  // parejas: francos juntos
-      const adj=(k>0&&esF(p,k-1))||(k<N-1&&esF(p,k+1));
-      const tres=(k>1&&esF(p,k-1)&&esF(p,k-2))||(k<N-2&&esF(p,k+1)&&esF(p,k+2))||(k>0&&k<N-1&&esF(p,k-1)&&esF(p,k+1));
-      if(tres) sc-=30; else if(adj) sc+=3;                                    // pares de francos sí, tres seguidos no
-      let cerca=0; for(let q=Math.max(0,k-4);q<=Math.min(N-1,k+4);q++) if(q!==k && Math.abs(q-k)>1 && esF(p,q)) cerca++;
-      sc-=cerca*5;                                                            // repartir en el mes
-      if(["VI","SA","DO"].includes(wd(k))) sc+=(promFinde-findeF[i])*4;       // fines de semana parejos
-      sc+=R()*1.5;
-      if(sc>bestS){ bestS=sc; best=k; }
+    if(best!==null) grupo.forEach(x=>{ ponF(x,best); ponF(x,best+1); hechoF.add(x); });
+  });
+  // 1b) el resto: de a 2 días seguidos cuando se puede, repartidos en el mes y parejo por día
+  for(let vuelta=0; vuelta<40; vuelta++){
+    const pend=P.map((p,i)=>i).filter(i=>falta[i]>0); if(!pend.length) break;
+    pend.sort((a,b)=>falta[b]-falta[a] || R()-.5);
+    let algo=false;
+    const hecho=new Set();
+    for(const i of pend){
+      if(hecho.has(i) || falta[i]<=0) continue;
+      const pj=PJ[i], grupo=(pj>=0 && falta[pj]>0 && !hecho.has(pj)) ? [i,pj] : [i];
+      const largo=Math.min(2, ...grupo.map(x=>falta[x]));
+      const fr=G[i].map((c,k)=>esLibreDia(c)?k:-99).filter(k=>k>=0);
+      let best=null, bs=-1e9;
+      for(let k=0;k+largo-1<N;k++){
+        let ok=true;
+        for(let q=0;q<largo && ok;q++) ok = grupo.every(x=>fOK(x,k+q)) && P.length-offDia(k+q)-grupo.length>=minDot(k+q);
+        if(!ok) continue;
+        const dist=fr.length ? Math.min(...fr.map(f=>Math.min(Math.abs(f-k),Math.abs(f-(k+largo-1))))) : 15;
+        let sc=Math.min(dist,10)*3;
+        for(let q=0;q<largo;q++) sc -= offDia(k+q)*5;
+        for(let q=0;q<largo;q++) if(PR[i][k+q].noPuede) sc+=12;      // días que no puede trabajar: mejor de franco
+        if(dist<=1) sc-=8;                                               // no pegado a otro franco
+        sc+=R()*0.8;
+        if(sc>bs){ bs=sc; best=k; }
+      }
+      if(best===null && largo===2){                                      // si no hay 2 seguidos, uno solo
+        for(let k=0;k<N;k++){ if(!grupo.every(x=>fOK(x,k)) || P.length-offDia(k)-grupo.length<minDot(k)) continue;
+          const dist=fr.length ? Math.min(...fr.map(f=>Math.abs(f-k))) : 15;
+          const sc=Math.min(dist,10)*3-offDia(k)*5+(PR[i][k].noPuede?12:0)+R()*0.8; if(sc>bs){ bs=sc; best=k; } }
+        if(best!==null){ grupo.forEach(x=>{ ponF(x,best); movF[x][best]=true; hecho.add(x); }); algo=true; }
+        continue;
+      }
+      if(best!==null){ grupo.forEach(x=>{ for(let q=0;q<largo;q++){ ponF(x,best+q); movF[x][best+q]=true; } hecho.add(x); }); algo=true; }
     }
-    if(best<0){ // sin holgura: igual se lo da en el día menos malo
-      for(let k=0;k<N;k++) if(libre(p,k)){ const sc=holgura(k)+R(); if(sc>bestS){ bestS=sc; best=k; } }
-    }
-    if(best<0){ falta[i]=0; continue; }
-    p.t[best]="F"; falta[i]--;
-    if(["VI","SA","DO"].includes(wd(best))) findeF[i]++;
+    if(!algo) break;
   }
 
-  // ---------- Fase 2: turnos día por día ----------
-  function trans(prev, s, i){                    // costo de pasar de prev a s para el jefe i (≥30 = descanso: no se negocia por preferencias)
-    if(!prev) return 0;
-    if(prev==="F"||prev==="14F"){
-      if(s==="MD") return 30;                                          // F → MD: evitar
-      const nocturno = i!==undefined && (pf[i].pre.includes("N")||pf[i].pre.includes("NC"));
-      if(nocturno) return s==="N" ? 0 : (s==="NC" ? 3 : 6);            // los que prefieren noche vuelven del franco de N
-      return s==="NC" ? 0 : (s==="N" ? 2 : 5);                         // el resto, de NC
-    }
-    const a=ROT.indexOf(prev), b=ROT.indexOf(s);
-    if(a<0||b<0) return 0;
-    if((prev==="NC"||prev==="N") && (s==="M"||s==="MD")) return 60;     // de noche a mañana/madrugada: no
-    if(prev==="NC" && s==="T1") return 60;                             // NC → T1 (más temprano que T): no
-    if(prev==="NC" && s==="T") return 30;                              // NC → T: evitar (mejor NC → N → T)
-    if(prev==="N" && s==="T1") return 12;                              // la T1 mejor después de T
-    if(s==="MD" && prev!=="M" && prev!=="MD") return 6;                // MD preferentemente después de M
-    const dif=b-a;
-    if(dif===0) return 0; if(dif===1) return 1; if(dif===2) return 3; if(dif>2) return 6;
-    return 18;                                                         // ir hacia atrás en la rotación
-  }
-  // guía de rotación: dentro de cada tramo entre francos se baja de NC (al empezar) a M/MD (al terminar)
-  const ORDEN={NC:0,N:1,T:2,T1:2.8,M:4,MD:4.3};
-  const corte=c=> c==="F"||c==="14F"||BLOQUE.includes(c);
-  function guia(i,k,sh){
-    const t=P[i].t; let a=k-1; while(a>=0 && !corte(t[a])) a--;
-    let z=k+1; while(z<N && !corte(t[z])) z++;
-    const L=z-a-1, pos=k-a-1; if(L<=1) return (sh==="M"||sh==="MD")?0:2;
-    const ideal=pos/(L-1)*4;
-    return Math.abs(ORDEN[sh]-ideal)*1.6;
-  }
-  for(let k=0;k<N;k++){
-    const d=k+1; if(EVT.has(d)) continue;
-    const disp=P.map((p,i)=>i).filter(i=>P[i].t[k]==="");
-    if(!disp.length) continue;
-    const ya={MD:0,M:0,T:0,T1:0,N:0,NC:0};
-    P.forEach(p=>{ if(ya[p.t[k]]!==undefined) ya[p.t[k]]++; });
-    const x=demanda(d), slots=[];
-    const req=(s,n)=>{ for(let j=0;j<n;j++) slots.push({s,req:true}); };
-    const ext=(s,n)=>{ for(let j=0;j<n;j++) slots.push({s,req:false}); };
-    const add=(s,n,w)=>{ for(let j=0;j<n;j++) slots.push({s,w}); };    // w: peso del casillero (negativo = conviene llenarlo)
-    add("MD",Math.max(0,x.MD-ya.MD),-1000);                             // mínimos obligatorios
-    add("NC",Math.max(0,2-ya.NC),-1000); add("N",Math.max(0,2-ya.N),-1000);
-    add("T",Math.max(0,3-ya.T),-1000);   add("M",Math.max(0,2-ya.M),-1000);
-    add("M",Math.max(0,3-Math.max(2,ya.M)),-500);                       // lo ideal: 3 de mañana
-    add("NC",Math.max(0,3-Math.max(2,ya.NC)),-500);                     // lo ideal: 3 NC
-    add("N",Math.max(0,3-Math.max(2,ya.N)),-500);                       // lo ideal: 3 N
-    if(ya.T1===0) add("T1",1,-450);                                     // y 1 T1 (con 3 T ya cubiertos)
-    // los que sobran: tarde mientras T+T1 no supere N+NC; si no, una N más
-    let nT=Math.max(3,ya.T)+Math.max(1,ya.T1), nNoc=Math.max(3,ya.N)+Math.max(3,ya.NC);
-    const ocup=slots.filter(x=>x.w<0).length, sobra=Math.max(0,disp.length-ocup);
-    for(let j=0;j<sobra;j++){ if(nT+1<=nNoc){ add("T",1,-100); nT++; } else { add("N",1,-100); nNoc++; } }
-    // de reserva (solo si las reglas de días de algún jefe no dejan otra opción)
-    add("M",Math.max(0,4-Math.max(3,ya.M)),250); add("T",disp.length,300); add("N",disp.length,320);
-    add("",disp.length,0);                                              // sin turno: solo si ninguno le está permitido
-    const cost=disp.map(i=>{
-      const p=P[i], prev=k>0?P[i].t[k-1]:"", next=k<N-1?P[i].t[k+1]:"";
-      return slots.map(sl=>{
-        const sh=sl.s; let c=sl.w;
-        if(sh==='') return 5000;
-        // las preferencias (prioridad 3) pesan más que la rotación (prioridad 4)
-        const w=rotW(i), tr=trans(prev,sh,i);
-        c+= (tr>=30 ? tr : tr*w) + guia(i,k,sh)*w;
-        if(next==="F"||next==="14F") c+= sh==="NC" ? 50 : antesFranco(sh)*w;  // antes del franco: lo más temprano posible (MD, M, T1, T…); NC → franco: no
-        else if(BLOQUE.includes(next) && sh==="NC") c+=50;                // NC antes de LAO/LIC: tampoco
-        else if(TRAB.includes(next)) c+=trans(sh,next,i)/2*w;
-        c+=prefPeso(i,sh);
-        if(!permitido(i,k,sh)) c+=1e6;                                     // regla obligatoria por día
-        if(sh==="T1") c+=2;
-        return c + R()*0.3;
-      });
-    });
-    const asg=hungarian(cost);
-    asg.forEach((j,ii)=>{ if(j>=0) P[disp[ii]].t[k]=slots[j].s; });
-  }
-
-  // ---------- Fase 3: mejora — intercambiar turnos entre dos jefes el mismo día (la cobertura no cambia) ----------
-  const prefCost=(i,k,sh)=>{
-    if(!TRAB.includes(sh)) return 0;
-    let c=prefPeso(i,sh); if(!permitido(i,k,sh)) c+=1e6;
+  /* ---------- 2) Primera asignación, día por día ---------- */
+  const libreT=(i,k)=>libreC(i,k) && G[i][k]!=="F";               // casillero de trabajo a completar
+  const cuenta=k=>{ const c={MD:0,M:0,T:0,T1:0,N:0,NC:0}; G.forEach(t=>{ if(c[t[k]]!==undefined) c[t[k]]++; }); return c; };
+  // proporciones del grupo flexible (para repartir parejo)
+  let SH={noche:1/3,tarde:1/3,manana:1/3};
+  const minLAntes=(i,k)=>{ let q=k-1; while(q>=0 && TRAB.includes(G[i][q])) q--; let mn=9;
+    for(let x=q+1;x<k;x++){ const L=LATE[G[i][x]]; if(L>Math.max(mn,PR[i][x].minL) && !(FN[i] && esNoche(G[i][x]))) mn=L; else mn=Math.min(mn,L); } return mn; };
+  const costoLocal=(i,k,s)=>{
+    const pr=PR[i][k]; let c=0;
+    if(!pr.H.includes(s)) return W.HARD*10;
+    if(!pr.P.includes(s)) c+=W.P3;
+    const a=k>0?G[i][k-1]:"", b=k<N-1?G[i][k+1]:"";
+    if(a && prohibido(a,s)) c+=W.HARD;
+    if(b && (TRAB.includes(b)||LIBRE.includes(b)) && prohibido(s,b)) c+=W.HARD;
+    if(OFFF.includes(a)) c+=W.P2*Math.max(0,pr.maxL-LATE[s]);
+    if(OFFF.includes(b)) c+=W.P1*Math.max(0,LATE[s]-pr.minL);
+    const mn=minLAntes(i,k); if(LATE[s]>Math.max(mn,pr.minL) && !(FN[i] && esNoche(s))) c+=W.P4;
+    if(flexible[i]){ const cnt={noche:0,tarde:0,manana:0}; let tot=0; for(let q=0;q<k;q++){ const x=G[i][q]; if(TRAB.includes(x)){ cnt[famDe(x)]++; tot++; } }
+      const f=famDe(s); c += W.P6*((cnt[f]+1)-(tot+1)*SH[f]); }
     return c;
   };
-  const enlace=(a,b,i)=>{                            // costo entre un día y el siguiente
-    if(TRAB.includes(a) && (b==="F"||b==="14F")) return a==="NC" ? 50 : antesFranco(a);
-    if(a==="NC" && BLOQUE.includes(b)) return 50;
-    if(TRAB.includes(b)) return trans(a,b,i);
-    return 0;
-  };
-  const local=(i,k)=>{ const t=P[i].t, w=rotW(i);
-    const e1=k>0?enlace(t[k-1],t[k],i):0, e2=k<N-1?enlace(t[k],t[k+1],i):0;
-    const pe=x=> x>=30 ? x : x*w;
-    return pe(e1) + pe(e2) + prefCost(i,k,t[k]) + (TRAB.includes(t[k])?guia(i,k,t[k])*w:0); };
-  for(let vuelta=0; vuelta<12; vuelta++){
-    let mejoro=false;
-    for(let k=0;k<N;k++){
-      if(EVT.has(k+1)) continue;
-      const cand=P.map((p,i)=>i).filter(i=>!fijo[i][k] && TRAB.includes(P[i].t[k]));
-      for(let x=0;x<cand.length;x++) for(let y=x+1;y<cand.length;y++){
-        const i=cand[x], j=cand[y], a=P[i].t[k], b=P[j].t[k]; if(a===b) continue;
-        const antes=local(i,k)+local(j,k);
-        P[i].t[k]=b; P[j].t[k]=a;
-        const despues=local(i,k)+local(j,k);
-        if(despues < antes-1e-9) mejoro=true; else { P[i].t[k]=a; P[j].t[k]=b; }
-      }
+  for(let k=0;k<N;k++){
+    if(EVT.has(k+1)) continue;
+    const libres=P.map((p,i)=>i).filter(i=>libreT(i,k) && G[i][k]==="");
+    if(!libres.length) continue;
+    const fij=cuenta(k), w=libres.length;
+    // composición del día: la que menos cuesta con la gente disponible
+    let best=null, bc=1e18;
+    const needMD=fin(k)?Math.max(0,2-fij.MD):0, md=Math.min(w,needMD);
+    for(let mm=0; mm<=w-md; mm++) for(let kk=0; kk<=w-md-mm; kk++) for(let nn=0; nn<=w-md-mm-kk; nn++){
+      const ncc=w-md-mm-kk-nn, ktot=fij.T+fij.T1+kk, t1=Math.min(kk,Math.max(0,t1Esperado(ktot)-fij.T1));
+      const cnt={MD:fij.MD+md, M:fij.M+mm, T:fij.T+kk-t1, T1:fij.T1+t1, N:fij.N+nn, NC:fij.NC+ncc};
+      const c=pgCostoDia(cnt,fin(k)); if(c<bc){ bc=c; best={md,mm,kk,t1,nn,ncc}; }
     }
-    if(!mejoro) break;
+    const slots=[...Array(best.md).fill("MD"),...Array(best.mm).fill("M"),...Array(best.kk-best.t1).fill("T"),...Array(best.t1).fill("T1"),...Array(best.nn).fill("N"),...Array(best.ncc).fill("NC")];
+    const cost=libres.map(i=>slots.map(s=>costoLocal(i,k,s)+R()*0.01));
+    const asg=pgHungaro(cost);
+    libres.forEach((i,r)=>{ G[i][k]=slots[asg[r]]; });
   }
 
-  // ---------- Fase 4: parejas — mismo turno el mismo día (cambiando con un tercero) ----------
-  P.forEach((p,i)=>{
-    const j=pareja(i); if(j<0 || j<i) return;
+  /* ---------- 3) Mejora del mes completo (recocido simulado) ---------- */
+  const calcSH=()=>{ const c={noche:0,tarde:0,manana:0}; let t=0; P.forEach((p,i)=>{ if(!flexible[i]) return; G[i].forEach(x=>{ if(TRAB.includes(x)){ c[famDe(x)]++; t++; } }); }); if(t) SH={noche:c.noche/t,tarde:c.tarde/t,manana:c.manana/t}; };
+  calcSH();
+  const costoP=i=>{
+    const t=G[i]; let c=0, mn=9, racha=0;
     for(let k=0;k<N;k++){
-      if(EVT.has(k+1)) continue;
-      const a=P[i].t[k], b=P[j].t[k];
-      if(a===b || !TRAB.includes(a) || !TRAB.includes(b)) continue;
-      let mejor=null, mejorD=1e9;
-      // opción 1: j toma el turno de i (j cambia con un tercero que tenga a)
-      // opción 2: i toma el turno de j
-      [[j,a],[i,b]].forEach(([x,quiero])=>{
-        if(fijo[x][k]) return;
-        P.forEach((q,z)=>{
-          if(z===i||z===j||fijo[z][k]||P[z].t[k]!==quiero) return;
-          const tx=P[x].t[k], l0=local(x,k)+local(z,k);
-          P[x].t[k]=quiero; P[z].t[k]=tx;
-          const d=local(x,k)+local(z,k)-l0;
-          P[x].t[k]=tx; P[z].t[k]=quiero;
-          if(d<mejorD){ mejorD=d; mejor=[x,z,quiero,tx]; }
-        });
-      });
-      if(mejor && mejorD<=20){ const [x,z,quiero,tx]=mejor; P[x].t[k]=quiero; P[z].t[k]=tx; }
+      const s=t[k], a=k>0?t[k-1]:"";
+      if(!TRAB.includes(s)){ if(a && TRAB.includes(a) && s && prohibido(a,s)) c+=W.HARD; mn=9; racha=0; continue; }
+      if(++racha>8) c+=250;                         // francos repartidos: evitar tramos largos sin franco
+      const pr=PR[i][k];
+      if(!pr.H.includes(s)) c+=W.HARD;
+      if(!pr.P.includes(s)) c+=W.P3;
+      if(a){ if(prohibido(a,s)) c+=W.HARD; if(OFFF.includes(a)) c+=W.P2*Math.max(0,pr.maxL-LATE[s]); }
+      if(k<N-1 && OFFF.includes(t[k+1])) c+=W.P1*Math.max(0,LATE[s]-pr.minL);
+      const L=LATE[s];
+      if(L>Math.max(mn,pr.minL) && !(FN[i] && esNoche(s) && TRAB.includes(a) && esNoche(a))){ c+=W.P4; mn=L; }
+      else mn=Math.min(mn,L);
     }
-  });
-
-  // ---------- Fase 5: proporciones parejas entre jefes ----------
-  // noches: NC/(N+NC) parecida entre todos · día: reparto de T, T1, M y MD parecido entre todos
-  // (las parejas se mueven juntas; nunca se rompe un descanso ni una regla por día)
-  const cnt=(i,c)=>P[i].t.filter((x,k)=>x===c && !EVT.has(k+1)).length;
-  const unidades=(k,c)=>{                    // personas (o parejas que ese día tienen el mismo turno) con turno c
-    const vistos=new Set(), out=[];
-    P.forEach((p,i)=>{
-      if(vistos.has(i) || fijo[i][k] || P[i].t[k]!==c) return;
-      const j=pareja(i);
-      if(j>=0 && !fijo[j][k] && P[j].t[k]===c){ out.push([i,j]); vistos.add(i); vistos.add(j); }
-      else { out.push([i]); vistos.add(i); }
-    });
-    return out;
+    const pj=PJ[i];
+    if(pj>=0){ const u=G[pj]; for(let k=0;k<N;k++){ const a=t[k], b=u[k];
+      if(TRAB.includes(a)&&TRAB.includes(b)&&a!==b) c+=W.P5;
+      else if((a==="F")!==(b==="F") && (TRAB.includes(a)||TRAB.includes(b))) c+=W.P5; } }
+    if(flexible[i]){ const cnt={noche:0,tarde:0,manana:0}; let tot=0; t.forEach(x=>{ if(TRAB.includes(x)){ cnt[famDe(x)]++; tot++; } });
+      ["noche","tarde","manana"].forEach(f=>{ const d=cnt[f]-SH[f]*tot; c+=W.P6*d*d; }); }
+    return c;
   };
-  const fijoNoche=i=> pf[i].pre.length>0 && pf[i].pre.every(x=>x==="N"||x==="NC");
-  function balancear(cats, tope){
-    const tot={}; let T=0; cats.forEach(c=>{ tot[c]=P.reduce((a,p,i)=>a+cnt(i,c),0); T+=tot[c]; });
-    if(!T) return;
-    const r={}; cats.forEach(c=>r[c]=tot[c]/T);
-    const desv=i=>{ const n=cats.map(c=>cnt(i,c)), t=n.reduce((a,b)=>a+b,0);
-      // los fijos de noche no pueden quedar con menos NC que el resto (sí pueden tener más)
-      if(cats.includes("NC") && fijoNoche(i)){            // fijos de noche: entre 8 y 11 NC en el mes, y nunca con menos proporción que el resto
-        const q=cats.indexOf("NC"), nc=n[q];
-        const fuera = nc<8 ? 8-nc : (nc>11 ? nc-11 : 0);
-        const d=nc-r.NC*t;
-        return fuera*fuera*6 + (d<0 ? d*d*1.5 : 0); }
-      return cats.reduce((a,c,q)=>a+Math.pow(n[q]-r[c]*t,2),0); };
-    for(let vuelta=0; vuelta<40; vuelta++){
-      let mejoro=false;
-      for(let k=0;k<N;k++){
-        if(EVT.has(k+1)) continue;
-        for(let x=0;x<cats.length;x++) for(let y=x+1;y<cats.length;y++){
-          const a=cats[x], b=cats[y];
-          const UA=unidades(k,a), UB=unidades(k,b);
-          // una pareja puede cambiar con dos personas sueltas
-          const combinar=U=>{ const sol=U.filter(u=>u.length===1), out=U.slice(); for(let x=0;x<sol.length;x++) for(let y=x+1;y<sol.length;y++) out.push([sol[x][0],sol[y][0]]); return out; };
-          const UA2=combinar(UA), UB2=combinar(UB);
-          for(const A of UA2) for(const B of UB2){
-            if(A.length!==B.length) continue;
-            if(A.length===2 && pareja(A[0])!==A[1] && B.length===2 && pareja(B[0])!==B[1]) continue;   // dos sueltos por dos sueltos: no hace falta
-            if(A.some(i=>P[i].t[k]!==a) || B.some(j=>P[j].t[k]!==b)) continue;
-            if(A.some(i=>!permitido(i,k,b)) || B.some(j=>!permitido(j,k,a))) continue;
-            const todos=[...A,...B];
-            const a0=todos.reduce((s,i)=>s+desv(i),0), l0=todos.reduce((s,i)=>s+local(i,k),0);
-            A.forEach(i=>P[i].t[k]=b); B.forEach(j=>P[j].t[k]=a);
-            const a1=todos.reduce((s,i)=>s+desv(i),0), l1=todos.reduce((s,i)=>s+local(i,k),0);
-            if(a1 < a0-1e-9 && l1-l0 <= tope){ mejoro=true; } else { A.forEach(i=>P[i].t[k]=a); B.forEach(j=>P[j].t[k]=b); }
-          }
-        }
-      }
-      if(!mejoro) break;
+  const DC=[], CN=[];
+  // francos parejos por día: cuántos no trabajan ese día comparado con el promedio
+  const diasCuenta=[]; for(let k=0;k<N;k++) if(!EVT.has(k+1)) diasCuenta.push(k);
+  const promOff=diasCuenta.length ? diasCuenta.reduce((a,k)=>a+G.filter(t=>!TRAB.includes(t[k])).length,0)/diasCuenta.length : 0;
+  const costoDiaK=k=>{ if(EVT.has(k+1)) return 0; const tr=CN[k].MD+CN[k].M+CN[k].T+CN[k].T1+CN[k].N+CN[k].NC, off=P.length-tr, d=off-promOff;
+    return pgCostoDia(CN[k],fin(k)) + (Math.abs(d)>1 ? (Math.abs(d)-1)*(Math.abs(d)-1)*150 : 0); };
+  for(let k=0;k<N;k++){ CN[k]=cuenta(k); DC[k]=costoDiaK(k); }
+  const PC=P.map((p,i)=>costoP(i));
+  const afect=ids=>{ const s=new Set(); ids.forEach(i=>{ s.add(i); if(PJ[i]>=0) s.add(PJ[i]); }); return [...s]; };
+  const total=()=>PC.reduce((a,b)=>a+b,0)+DC.reduce((a,b)=>a+b,0);
+  const libresDia=[]; for(let k=0;k<N;k++) libresDia[k]=P.map((p,i)=>i).filter(i=>libreT(i,k));
+  const cel=[]; for(let k=0;k<N;k++) libresDia[k].forEach(i=>cel.push([i,k]));
+  const CODS=["MD","M","T","T1","N","NC"];
+  const movibles=[]; P.forEach((p,i)=>{ for(let k=0;k<N;k++) if(movF[i][k]) movibles.push(i); });
+  const ITER=window.PG_ITER || Math.max(300000, cel.length*1000);
+  for(let it=0; it<ITER && cel.length; it++){
+    const T=1500*Math.pow(0.002, it/ITER);
+    if(it%20000===0){ calcSH(); P.forEach((p,i)=>PC[i]=costoP(i)); }
+    const r=R();
+    if(r<0.15){                                     // intercambiar un tramo de 2 a 5 días entre dos (los totales no cambian)
+      const k=Math.floor(R()*N), len=2+Math.floor(R()*4); if(k+len>N) continue;
+      const L=libresDia[k]; if(L.length<2) continue;
+      const i=L[Math.floor(R()*L.length)], j=L[Math.floor(R()*L.length)]; if(i===j) continue;
+      let ok=true, dif=false;
+      for(let q=k;q<k+len && ok;q++){ const a=G[i][q], b=G[j][q];
+        if(!libreT(i,q)||!libreT(j,q)||!TRAB.includes(a)||!TRAB.includes(b)||!PR[i][q].H.includes(b)||!PR[j][q].H.includes(a)) ok=false; if(a!==b) dif=true; }
+      if(!ok||!dif) continue;
+      const ids=afect([i,j]), c0=ids.reduce((s,x)=>s+PC[x],0);
+      const sw=()=>{ for(let q=k;q<k+len;q++){ const a=G[i][q]; G[i][q]=G[j][q]; G[j][q]=a; } };
+      sw(); const nc=ids.map(costoP), c1=nc.reduce((s,x)=>s+x,0), d=c1-c0;
+      if(d<=0 || R()<Math.exp(-d/T)) ids.forEach((x,q)=>PC[x]=nc[q]); else sw();
+    } else if(r<0.6){                               // intercambio de turnos entre dos el mismo día
+      const k=Math.floor(R()*N), L=libresDia[k]; if(L.length<2) continue;
+      const i=L[Math.floor(R()*L.length)], j=L[Math.floor(R()*L.length)]; if(i===j) continue;
+      const a=G[i][k], b=G[j][k]; if(a===b || !TRAB.includes(a) || !TRAB.includes(b)) continue;
+      const ids=afect([i,j]), c0=ids.reduce((s,x)=>s+PC[x],0);
+      G[i][k]=b; G[j][k]=a;
+      const nc=ids.map(costoP), c1=nc.reduce((s,x)=>s+x,0), d=c1-c0;
+      if(d<=0 || R()<Math.exp(-d/T)) ids.forEach((x,q)=>PC[x]=nc[q]); else { G[i][k]=a; G[j][k]=b; }
+    } else if(r<0.9){                               // cambiar el turno de un casillero
+      const [i,k]=cel[Math.floor(R()*cel.length)], a=G[i][k]; if(!TRAB.includes(a)) continue;
+      const b=CODS[Math.floor(R()*CODS.length)]; if(b===a || !PR[i][k].H.includes(b)) continue;
+      const ids=afect([i]), c0=ids.reduce((s,x)=>s+PC[x],0)+DC[k];
+      G[i][k]=b; CN[k][a]--; CN[k][b]++;
+      const nc=ids.map(costoP), nd=costoDiaK(k), c1=nc.reduce((s,x)=>s+x,0)+nd, d=c1-c0;
+      if(d<=0 || R()<Math.exp(-d/T)){ ids.forEach((x,q)=>PC[x]=nc[q]); DC[k]=nd; } else { G[i][k]=a; CN[k][a]++; CN[k][b]--; }
+    } else if(movibles.length){                     // correr un franco puesto por el programa
+      const i=movibles[Math.floor(R()*movibles.length)];
+      const xs=[]; for(let k=0;k<N;k++) if(movF[i][k]) xs.push(k);
+      const x=xs[Math.floor(R()*xs.length)], y=Math.floor(R()*N);
+      if(x===y || !libreT(i,y) || !TRAB.includes(G[i][y])) continue;
+      const pj=PJ[i], quien=[i];
+      if(pj>=0 && G[pj][x]==="F" && movF[pj][x] && libreT(pj,y) && TRAB.includes(G[pj][y])) quien.push(pj);   // la pareja se mueve junta
+      const ss=quien.map(z=>G[z][y]);
+      const ids=afect(quien), c0=ids.reduce((q,z)=>q+PC[z],0)+DC[x]+DC[y];
+      quien.forEach((z,q)=>{ G[z][x]=ss[q]; G[z][y]="F"; CN[x][ss[q]]++; CN[y][ss[q]]--; });
+      const nc=ids.map(costoP), nx=costoDiaK(x), ny=costoDiaK(y), c1=nc.reduce((q,z)=>q+z,0)+nx+ny, d=c1-c0;
+      if(d<=0 || R()<Math.exp(-d/T)){ ids.forEach((z,q)=>PC[z]=nc[q]); DC[x]=nx; DC[y]=ny; quien.forEach(z=>{ movF[z][x]=false; movF[z][y]=true; }); }
+      else quien.forEach((z,q)=>{ G[z][x]="F"; G[z][y]=ss[q]; CN[x][ss[q]]--; CN[y][ss[q]]++; });
     }
   }
-  balancear(["N","NC"], 8);
-  balancear(["T","T1","M","MD"], 10);
-
-  // ---------- Fase 6: el día antes del franco, el turno más temprano lo hace quien sale de franco ----------
-  const orden={MD:0,M:1,T1:2,T:3,N:4,NC:5};
+  // repaso final: intercambios que mejoran sí o sí
+  calcSH(); P.forEach((p,i)=>PC[i]=costoP(i));
   for(let vuelta=0; vuelta<6; vuelta++){
     let mejoro=false;
-    for(let k=0;k<N-1;k++){
-      if(EVT.has(k+1)) continue;
-      const fr=x=>x==="F"||x==="14F";
-      const A=P.map((p,i)=>i).filter(i=>!fijo[i][k] && TRAB.includes(P[i].t[k]) && fr(P[i].t[k+1]));
-      const B=P.map((p,i)=>i).filter(i=>!fijo[i][k] && TRAB.includes(P[i].t[k]) && !fr(P[i].t[k+1]));
-      for(const i of A) for(const j of B){
-        const a=P[i].t[k], b=P[j].t[k];
-        if(!(orden[b]<orden[a])) continue;                       // j tiene uno más temprano que i
-        if(!permitido(i,k,b) || !permitido(j,k,a)) continue;
-        if(pareja(i)===j) continue;
-        const l0=local(i,k)+local(j,k);
-        P[i].t[k]=b; P[j].t[k]=a;
-        const l1=local(i,k)+local(j,k);
-        if(l1-l0<=6){ mejoro=true; } else { P[i].t[k]=a; P[j].t[k]=b; }
-      }
-    }
+    for(let k=0;k<N;k++){ const L=libresDia[k];
+      for(let x=0;x<L.length;x++) for(let y=x+1;y<L.length;y++){
+        const i=L[x], j=L[y], a=G[i][k], b=G[j][k]; if(a===b || !TRAB.includes(a) || !TRAB.includes(b)) continue;
+        const ids=afect([i,j]), c0=ids.reduce((s,z)=>s+PC[z],0);
+        G[i][k]=b; G[j][k]=a; const nc=ids.map(costoP), c1=nc.reduce((s,z)=>s+z,0);
+        if(c1<c0-1e-9){ ids.forEach((z,q)=>PC[z]=nc[q]); mejoro=true; } else { G[i][k]=a; G[j][k]=b; }
+      } }
     if(!mejoro) break;
   }
 
-  P.forEach((p,i)=>{ const l=new Set(rehacer ? [] : (mes.auto[p.leg]||[]));
-    if(rehacer) (mes.auto[p.leg]||[]).forEach(d=>{ if(p.t[d-1]!=="") l.add(d); });
-    p.t.forEach((c,k)=>{ if(antes[i][k]==="" && c!=="") l.add(k+1); });
-    mes.auto[p.leg]=[...l].sort((a,b)=>a-b); });
-
-  // ---------- Revisión ----------
-  const prob=[];
-  for(let k=0;k<N;k++){
-    const d=k+1; if(EVT.has(d)) continue;
-    TOT.forEach(([lab,cls,codes])=>{
-      if(!REGLAS_DIA[lab]) return;
-      const msg=REGLAS_DIA[lab](countDay(d,codes),d);
-      if(msg) prob.push(`${dayAb(d)} ${d}: ${msg.split(" · ")[0]}`);
-    });
-  }
-  P.forEach(p=>{ const f=p.t.filter((c,k)=>esFranco(c,k)).length; if(f!==fReq) prob.push(`${p.nom}: ${f} francos (corresponden ${fReq})`); });
-  P.forEach(p=>{ p.t.forEach((c,k)=>{ if(c==="" && !EVT.has(k+1)) prob.push(`${p.nom}: sin turno posible el ${dayAb(k+1)} ${k+1} (por su regla de días)`); }); });
-  let fijosTrab=0; P.forEach((p,i)=>p.t.forEach((c,k)=>{ if(TRAB.includes(c) && !(mes.auto[p.leg]||[]).includes(k+1)) fijosTrab++; }));
-  prob.fijos=fijosTrab;
-  let suaves=0;
-  for(let k=0;k<N;k++){ const d=k+1; if(EVT.has(d)) continue;
-    TOT.forEach(([lab,cls,codes])=>{ if(AVISOS_DIA[lab] && AVISOS_DIA[lab](countDay(d,codes),d)) suaves++; }); }
-  prob.suaves=suaves;
-  let celdas=0; P.forEach(p=>{ for(let d=1; d<=N; d++){ if(fueraPref(p,p.t[d-1]) || avisosCelda(p,d).length) celdas++; } });
-  prob.celdas=celdas;
-  return prob;
+  /* ---------- 4) Guardar ---------- */
+  P.forEach((p,i)=>{
+    const l=new Set(rehacer ? [] : (m.auto[p.leg]||[]));
+    if(rehacer) (m.auto[p.leg]||[]).forEach(d=>{ if(G[i][d-1]!=="") l.add(d); });
+    for(let k=0;k<N;k++){ if(antes[i][k]==="" && G[i][k]!==""){ l.add(k+1); } p.t[k]=G[i][k]; }
+    m.auto[p.leg]=[...l].sort((a,b)=>a-b);
+  });
+  return { francosPuestos: P.reduce((a,p,i)=>a+G[i].filter((c,k)=>c==="F" && antes[i][k]==="").length,0),
+           sinFranco: P.map((p,i)=>i).filter(i=>falta[i]>0).map(i=>`${P[i].nom} (faltan ${falta[i]})`) };
 }
 
 /* ---- panel del botón Programar ---- */
@@ -1646,51 +1719,51 @@ const ap=document.getElementById("autoPanel");
 let apBackup=null;
 document.getElementById("btnAuto").onclick=e=>{
   if(ap.style.display==="block"){ ap.style.display="none"; return; }
-  document.getElementById("apMes").textContent=`${MESES[MO-1]} ${Y}`;
-  document.getElementById("apVer").textContent="versión "+VERSION;
+  const m=curMonth(), hay=m.auto && Object.values(m.auto).some(l=>l && l.length);
+  document.getElementById("apMes").textContent=`· ${MESES[MO-1]} ${Y}`;
+  document.getElementById("apRehWrap").style.display = hay ? "" : "none";
+  document.getElementById("apRehacer").checked = !!hay;
   document.getElementById("apBody").style.display="block"; document.getElementById("apRes").style.display="none";
-  const mm=curMonth(), au=mm.auto;
-  const hayTrab=people.some(p=>p.t.some(c=>TRAB.includes(c)));
-  const conRegistro = au && Object.values(au).some(l=>l && l.length);
-  document.getElementById("apRehacer").checked = conRegistro || hayTrab;
   const r=e.currentTarget.getBoundingClientRect();
-  ap.style.left=Math.max(8,Math.min(r.left, innerWidth-396))+"px"; ap.style.top=(r.bottom+6)+"px"; ap.style.display="block";
+  ap.style.left=Math.max(8,Math.min(r.left, innerWidth-400))+"px"; ap.style.top=(r.bottom+6)+"px"; ap.style.display="block";
 };
 document.getElementById("apCancel").onclick=()=>{ ap.style.display="none"; };
 document.getElementById("apGo").onclick=()=>{
-  try{
-  apBackup=people.map(p=>p.t.slice()); const autoBak=JSON.stringify(curMonth().auto||{});
-  const vacios0=people.reduce((a,p)=>a+p.t.filter((c,k)=>c===""&&!EVT.has(k+1)).length,0);
-  const reh=document.getElementById("apRehacer").checked;
-  const vacios=people.reduce((a,p)=>a+p.t.filter((c,k)=>c===""&&!EVT.has(k+1)).length,0);
-  if(!reh && vacios===0){
+  const go=document.getElementById("apGo"); go.disabled=true; go.textContent="Programando…";
+  setTimeout(()=>{
+    const m=curMonth();
+    apBackup={t:people.map(p=>p.t.slice()), auto:JSON.stringify(m.auto||{})};
     const res=document.getElementById("apRes");
-    res.innerHTML=`<div class="ap-warn">No hay casilleros vacíos para completar.</div><p class="ap-p">Si querés volver a programar el mes, tildá <b>Rehacer</b>.</p><div class="ap-res-row"><button class="go" id="apBack">Volver</button></div>`;
+    try{
+      const r=programarMes(document.getElementById("apRehacer").checked);
+      save(); render();
+      // revisión: reglas obligatorias por día, francos y casilleros en ámbar
+      const prob=[];
+      for(let d=1; d<=N_DAYS; d++){ if(EVT.has(d)) continue;
+        TOT.forEach(([lab,cls,codes])=>{ if(!REGLAS_DIA[lab]) return; const msg=REGLAS_DIA[lab](countDay(d,codes),d); if(msg) prob.push(`${dayAb(d)} ${d}: ${msg.split(" · ")[0]}`); }); }
+      const fReq=francosMes();
+      people.forEach(p=>{ if(!p.t.some(c=>c)) return; const f=p.t.filter((c,k)=>esFranco(c,k)).length; if(f!==fReq) prob.push(`${p.nom}: ${f} francos (corresponden ${fReq})`); });
+      people.forEach(p=>p.t.forEach((c,k)=>{ if(c==="" && !EVT.has(k+1)) prob.push(`${p.nom}: quedó vacío el ${k+1}`); }));
+      let amb=0; people.forEach(p=>{ for(let d=1; d<=N_DAYS; d++) if(fueraPref(p,p.t[d-1],d) || avisosCelda(p,d).length) amb++; });
+      let suaves=0; for(let d=1; d<=N_DAYS; d++){ if(EVT.has(d)) continue; TOT.forEach(([lab,cls,codes])=>{ if(AVISOS_DIA[lab] && AVISOS_DIA[lab](countDay(d,codes),d)) suaves++; }); }
+      res.innerHTML = (prob.length ? `<div class="ap-warn">Programado, pero hay ${prob.length} ${prob.length===1?"punto obligatorio":"puntos obligatorios"} sin cumplir:</div><ul class="ap-list">${prob.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`
+                                   : `<div class="ap-ok">Listo: se cumplen las coberturas obligatorias de todos los días y los francos de cada jefe.</div>`)
+        + (r.francosPuestos ? `<p class="ap-p">Se pusieron ${r.francosPuestos} francos que faltaban.</p>` : "")
+        + (amb ? `<p class="ap-p">${amb} ${amb===1?"casillero no pudo":"casilleros no pudieron"} cumplir alguna prioridad: están en ámbar (pasá el mouse o tocá para ver el motivo).</p>` : `<p class="ap-p">Se cumplieron todas las prioridades.</p>`)
+        + (suaves ? `<p class="ap-p">${suaves} ${suaves===1?"total del día queda":"totales del día quedan"} fuera de lo ideal (en ámbar abajo).</p>` : "")
+        + `<div class="ap-res-row"><button id="apUndo">Deshacer</button><button class="go" id="apClose">Aceptar</button></div>`;
+    }catch(err){
+      res.innerHTML=`<div class="ap-warn">Ocurrió un error al programar:</div><p class="ap-p" style="font-family:monospace;font-size:11px;white-space:pre-wrap">${esc(String(err && (err.stack||err.message)||err))}</p><div class="ap-res-row"><button id="apUndo">Deshacer</button><button class="go" id="apClose">Cerrar</button></div>`;
+    }
     document.getElementById("apBody").style.display="none"; res.style.display="block";
-    document.getElementById("apBack").onclick=()=>{ res.style.display="none"; document.getElementById("apBody").style.display="block"; };
-    return;
-  }
-  const prob=autoProgramar(reh);
-  save(); render();
-  const res=document.getElementById("apRes");
-  res.innerHTML = (prob.length
-      ? `<div class="ap-warn">Programado, con ${prob.length} ${prob.length===1?"punto":"puntos"} sin cumplir:</div><ul class="ap-list">${prob.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`
-      : `<div class="ap-ok">Listo: se cumplen la cobertura de todos los días y los francos de cada jefe.</div>`)
-    + (prob.fijos ? `<p class="ap-p">Se respetaron ${prob.fijos} turnos de trabajo cargados a mano; si estorban, borralos y volvé a programar.</p>` : "")
-    + `<p class="ap-p">${prob.celdas ? `${prob.celdas} ${prob.celdas===1?"casillero no pudo":"casilleros no pudieron"} cumplir algún criterio (preferencia, descanso o pareja): están marcados en ámbar en la grilla; pasá el mouse para ver el motivo.` : "En la grilla no quedó ningún casillero fuera de criterio (preferencias, descansos y parejas cumplidos)."}</p>`
-    + (prob.suaves ? `<p class="ap-p">${prob.suaves} ${prob.suaves===1?"día queda":"casos quedan"} fuera de lo ideal (marcados en ámbar en los totales).</p>` : "")
-    + `<div class="ap-res-row"><button id="apUndo">Deshacer</button><button class="go" id="apClose">Aceptar</button></div>`;
-  document.getElementById("apBody").style.display="none"; res.style.display="block";
-  document.getElementById("apUndo").onclick=()=>{ people.forEach((p,i)=>p.t=apBackup[i]); curMonth().auto=JSON.parse(autoBak); save(); render(); ap.style.display="none"; };
-  document.getElementById("apClose").onclick=()=>{ ap.style.display="none"; };
-  }catch(err){
-    const res=document.getElementById("apRes");
-    res.innerHTML=`<div class="ap-warn">Ocurrió un error al programar:</div><p class="ap-p" style="font-family:monospace;font-size:11px;white-space:pre-wrap">${esc(String(err && (err.stack||err.message)||err))}</p><div class="ap-res-row"><button class="go" id="apClose2">Cerrar</button></div>`;
-    document.getElementById("apBody").style.display="none"; res.style.display="block";
-    document.getElementById("apClose2").onclick=()=>{ ap.style.display="none"; };
-  }
+    document.getElementById("apUndo").onclick=()=>{ people.forEach((p,i)=>p.t=apBackup.t[i]); curMonth().auto=JSON.parse(apBackup.auto); save(); render(); ap.style.display="none"; };
+    document.getElementById("apClose").onclick=()=>{ ap.style.display="none"; };
+    go.disabled=false; go.textContent="Programar";
+  },30);
 };
 document.addEventListener("mousedown",e=>{ if(ap.style.display==="block" && !ap.contains(e.target) && !e.target.closest("#btnAuto")) ap.style.display="none"; });
+// casilleros que completó el programador: al editarlos a mano dejan de serlo
+function manual(leg,d){ const m=curMonth(); if(m && m.auto && m.auto[leg]) m.auto[leg]=m.auto[leg].filter(x=>x!==d); }
 
 /* ---- COPIA DE SEGURIDAD: exportar / importar todos los datos ---- */
 const dtp=document.getElementById("datosPop");
@@ -1707,19 +1780,29 @@ function descargar(obj,nombre){
   const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=nombre; document.body.appendChild(a); a.click();
   setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1500);
 }
-document.getElementById("dtExp").onclick=()=>{
+function armarExport(){
   save();
   const alc=document.querySelector('input[name="dtAlc"]:checked').value, k=keyOf(Y,MO);
-  let obj, nombre;
-  if(alc==="mes"){
-    obj={app:"programacion-jefes", tipo:"mes", version:1, meses:{[k]:STORE.meses[k]}, prefs:STORE.prefs, actual:k};
-    nombre=`jefes_${MESES[MO-1].toLowerCase()}_${Y}.json`;
-  } else {
-    obj={...STORE, app:"programacion-jefes", tipo:"todo", version:1};
-    nombre=`jefes_datos_${hoyTxt()}.json`;
-  }
+  if(alc==="mes") return {obj:{app:"programacion-jefes", tipo:"mes", version:1, meses:{[k]:STORE.meses[k]}, prefs:STORE.prefs, actual:k}, nombre:`jefes_${MESES[MO-1].toLowerCase()}_${Y}.json`};
+  return {obj:{...STORE, app:"programacion-jefes", tipo:"todo", version:1}, nombre:`jefes_datos_${hoyTxt()}.json`};
+}
+document.getElementById("dtExp").onclick=async()=>{
+  const {obj,nombre}=armarExport(), msg=document.getElementById("dtMsg");
+  // en celulares (iPhone) se usa el menú Compartir: permite "Guardar en Archivos" o mandarlo a otra app
+  try{
+    const file=new File([JSON.stringify(obj,null,1)], nombre, {type:"application/json"});
+    if(navigator.canShare && navigator.canShare({files:[file]}) && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)){
+      await navigator.share({files:[file], title:nombre});
+      msg.textContent=`Listo: ${nombre}.`; return;
+    }
+  }catch(e){ if(e && e.name==="AbortError"){ msg.textContent="Se canceló."; return; } }
   descargar(obj,nombre);
-  document.getElementById("dtMsg").textContent=`Se descargó ${nombre}.`;
+  msg.textContent=`Se descargó ${nombre}.`;
+};
+document.getElementById("dtCopy").onclick=async()=>{
+  const {obj,nombre}=armarExport(), msg=document.getElementById("dtMsg"), txt=JSON.stringify(obj);
+  try{ await navigator.clipboard.writeText(txt); msg.textContent=`Se copió el texto de ${nombre} (${Math.round(txt.length/1024)} KB). Pegalo donde lo necesites.`; }
+  catch(e){ msg.textContent="No se pudo copiar automáticamente en este navegador; usá Exportar."; }
 };
 document.getElementById("dtImp").onclick=()=>document.getElementById("dtFile").click();
 document.getElementById("dtFile").onchange=async e=>{
@@ -1749,20 +1832,115 @@ document.getElementById("dtFile").onchange=async e=>{
   e.target.value="";
 };
 document.addEventListener("mousedown",e=>{ if(dtp.style.display==="block" && !dtp.contains(e.target) && !e.target.closest("#btnDatos")) dtp.style.display="none"; });
+
+/* ---- VER ORIGINAL: muestra la planilla registrada, solo lectura ---- */
+function verOriginal(on){
+  const m=curMonth();
+  if(on && !VER_ORIG && m.orig){
+    VER_ORIG={t:people.map(p=>p.t.slice()), fp:new Set(FP), fer:new Set(FER), evt:new Map(EVT), cmp:COMPARE};
+    people.forEach(p=>{ const t=((m.orig.t[p.leg])||[]).slice(0,N_DAYS); while(t.length<N_DAYS) t.push(""); p.t=t; });
+    FP=new Set(m.orig.fp||[]); FER=new Set(m.orig.fer||[]); EVT=new Map(Object.entries(m.orig.evt||{}).map(([d,n])=>[+d,n]));
+    COMPARE=false; SEL=null;
+    const f=new Date(m.orig.fecha); document.getElementById("origFecha").textContent=f.toLocaleDateString("es-AR")+" "+f.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",hour12:false});
+    document.body.classList.add("ver-orig");
+  } else if(!on && VER_ORIG){
+    people.forEach((p,i)=>p.t=VER_ORIG.t[i]); FP=VER_ORIG.fp; FER=VER_ORIG.fer; EVT=VER_ORIG.evt; COMPARE=VER_ORIG.cmp;
+    VER_ORIG=null; document.body.classList.remove("ver-orig");
+  }
+  render();
+}
+document.getElementById("regState").onclick=()=>{ if(EDIT_ORIG) terminarCorreccion(); verOriginal(!VER_ORIG); };
+let ORIG0=null;   // copia del original al empezar a corregirlo (para saber qué se corrigió)
+function terminarCorreccion(modo){
+  if(!EDIT_ORIG) return;
+  save(); EDIT_ORIG=false;
+  const m=curMonth(), mo=m.orig;
+  if(mo){
+    mo.fecha=new Date().toISOString();
+    // lo corregido en el original pasa también a la planilla actual (el resto de la actual no se toca)
+    if(modo==="todo"){
+      // la actual pasa a ser una copia exacta del original
+      people.forEach((p,i)=>{ const t=(mo.t[p.leg]||[]).slice(0,N_DAYS); while(t.length<N_DAYS) t.push(""); m.t[p.leg]=t.slice(); if(VER_ORIG && VER_ORIG.t[i]) VER_ORIG.t[i]=t.slice(); });
+      m.fp=[...(mo.fp||[])]; m.fer=[...(mo.fer||[])]; m.evt={...(mo.evt||{})};
+      if(VER_ORIG){ VER_ORIG.fp=new Set(m.fp); VER_ORIG.fer=new Set(m.fer); VER_ORIG.evt=new Map(Object.entries(m.evt).map(([d,n])=>[+d,n])); }
+    } else if(ORIG0){
+      people.forEach((p,i)=>{
+        const t0=ORIG0.t[p.leg]||[], t1=mo.t[p.leg]||[];
+        if(!m.t[p.leg]) m.t[p.leg]=new Array(N_DAYS).fill("");
+        for(let d=0; d<N_DAYS; d++){
+          if((t0[d]||"")===(t1[d]||"")) continue;
+          m.t[p.leg][d]=t1[d]||"";
+          if(VER_ORIG && VER_ORIG.t[i]) VER_ORIG.t[i][d]=t1[d]||"";
+        }
+      });
+      const pasar=(k0,k1,key,setV)=>{ for(let d=1; d<=N_DAYS; d++){ const a=k0.includes(d), b=k1.includes(d); if(a===b) continue;
+        const cur=new Set(m[key]||[]); b?cur.add(d):cur.delete(d); m[key]=[...cur].sort((x,y)=>x-y);
+        if(VER_ORIG){ b?VER_ORIG[setV].add(d):VER_ORIG[setV].delete(d); } } };
+      pasar(ORIG0.fp||[], mo.fp||[], "fp", "fp");
+      pasar(ORIG0.fer||[], mo.fer||[], "fer", "fer");
+      const e0=ORIG0.evt||{}, e1=mo.evt||{}, me=Array.isArray(m.evt)?{}:{...(m.evt||{})};
+      for(let d=1; d<=N_DAYS; d++){ const a=e0[d], b=e1[d]; if(a===b) continue;
+        if(b===undefined){ delete me[d]; if(VER_ORIG) VER_ORIG.evt.delete(d); } else { me[d]=b; if(VER_ORIG) VER_ORIG.evt.set(d,b); } }
+      m.evt=me;
+    }
+    persist();
+  }
+  ORIG0=null;
+  document.body.classList.remove("edit-orig"); render();
+}
+// en la vista del original: tocar la planilla avisa que es solo lectura; los botones que editan vuelven primero a la actual
+let roT=null;
+function avisoSoloLectura(){ const t=document.getElementById("roToast"); t.classList.add("on"); clearTimeout(roT); roT=setTimeout(()=>t.classList.remove("on"),1600); }
+document.getElementById("gridCard").addEventListener("click",()=>{ if(SOLO_LECT()) avisoSoloLectura(); },true);
+document.getElementById("origSalir").onclick=()=>verOriginal(false);
 document.getElementById("btnPrint").onclick=imprimir;
 document.getElementById("btnShare").onclick=compartirImagen;
 window.addEventListener("beforeprint", buildPrint); // también si imprimen con Ctrl+P
 /* ---- botones Registrar / Comparar ---- */
 const rc=document.getElementById("regConfirm");
+const rmn=document.getElementById("regMenu"), CLAVE="1318";
+document.getElementById("rcSolo").onclick=()=>{ document.getElementById("regCorr").style.display="none"; terminarCorreccion("solo"); };
+document.getElementById("rcTodo").onclick=()=>{ document.getElementById("regCorr").style.display="none"; terminarCorreccion("todo"); };
+document.getElementById("rcNo").onclick=()=>{ document.getElementById("regCorr").style.display="none"; };
 document.getElementById("btnReg").onclick=e=>{
-  const o=curMonth().orig;
-  if(!o){ registrar(); return; }
-  const f=new Date(o.fecha);
-  document.getElementById("regMsg").innerHTML=`Ya hay un original registrado el <b>${f.toLocaleDateString("es-AR")} ${f.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",hour12:false})}</b>. ¿Querés reemplazarlo por la programación actual?`;
+  if(EDIT_ORIG){                                  // elegir cómo pasan las correcciones a la actual
+    const rcp=document.getElementById("regCorr"), r=e.currentTarget.getBoundingClientRect();
+    rcp.style.left=Math.max(8,Math.min(r.left, innerWidth-320))+"px"; rcp.style.top=(r.bottom+6)+"px"; rcp.style.display="block";
+    return;
+  }
+  if(curMonth().orig && VER_ORIG){                // desde el original: opciones con clave
+    const r=e.currentTarget.getBoundingClientRect();
+    document.getElementById("rmClave").value=""; document.getElementById("rmMsg").textContent="";
+    rmn.style.left=Math.max(8,Math.min(r.left, innerWidth-320))+"px"; rmn.style.top=(r.bottom+6)+"px"; rmn.style.display="block";
+    setTimeout(()=>document.getElementById("rmClave").focus(),50);
+    return;
+  }
+  if(curMonth().orig) return;                    // el original queda congelado: se registra una sola vez
   const r=e.currentTarget.getBoundingClientRect();
+  document.getElementById("regMsg").innerHTML=`Se va a guardar la planilla tal como está como <b>original</b> y quedará congelada. Desde ahí, cada cambio se marca con una pestañita. ¿Registrar?`;
   rc.style.left=Math.min(r.left, innerWidth-290)+"px"; rc.style.top=(r.bottom+6)+"px"; rc.style.display="block";
 };
-document.getElementById("regYes").onclick=()=>{ registrar(); rc.style.display="none"; };
+document.getElementById("regYes").onclick=()=>{ if(!curMonth().orig) registrar(); rc.style.display="none"; };
+document.getElementById("rmNo").onclick=()=>{ rmn.style.display="none"; };
+document.getElementById("rmClave").addEventListener("keydown",e=>{ if(e.key==="Enter") document.getElementById("rmOk").click(); });
+document.getElementById("rmOk").onclick=()=>{
+  const msg=document.getElementById("rmMsg");
+  if(document.getElementById("rmClave").value!==CLAVE){ msg.textContent="Clave incorrecta."; document.getElementById("rmClave").select(); return; }
+  const acc=document.querySelector('input[name="rmAcc"]:checked').value;
+  rmn.style.display="none";
+  if(acc==="corregir"){ ORIG0=JSON.parse(JSON.stringify(curMonth().orig)); EDIT_ORIG=true; document.body.classList.add("edit-orig"); render(); return; }
+  if(acc==="todo" || acc==="parcial"){
+    // se borra el original y queda abierto (como al corregirlo); al tocar "Registrar" se elige qué pasa a la actual
+    ORIG0=JSON.parse(JSON.stringify(curMonth().orig)); EDIT_ORIG=true; document.body.classList.add("edit-orig");
+    const queda = acc==="parcial" ? ["F","14F","LIC","LAO"] : [];
+    people.forEach(p=>{ p.t=p.t.map(c=> queda.includes(c) ? c : ""); });
+    const m=curMonth(); if(m.auto) Object.keys(m.auto).forEach(l=>m.auto[l]=[]);   // lo que quede no es del programador
+    save(); render(); updateRegUI(); return;
+  }
+  verOriginal(false);                            // volver a registrar: la planilla actual pasa a ser el original
+  registrar();
+  updateRegUI();
+};
 document.getElementById("regNo").onclick=()=>{ rc.style.display="none"; };
 document.getElementById("togC").onclick=()=>{
   COMPARE=!COMPARE; try{ localStorage.setItem("jefes_comparar", COMPARE?"1":"0"); }catch(e){}
@@ -1771,6 +1949,8 @@ document.getElementById("togC").onclick=()=>{
 
 document.addEventListener("mousedown",e=>{
   if(!rc.contains(e.target) && !e.target.closest("#btnReg")) rc.style.display="none";
+  if(!rmn.contains(e.target) && !e.target.closest("#btnReg")) rmn.style.display="none";
+  { const rcp=document.getElementById("regCorr"); if(!rcp.contains(e.target) && !e.target.closest("#btnReg")) rcp.style.display="none"; }
   if(!pk.contains(e.target) && !e.target.closest("td.cell")) pk.style.display="none";
   if(!dm.contains(e.target)) dm.style.display="none";
   if(!cal.contains(e.target) && !e.target.closest("#mTitle")) cal.style.display="none";
