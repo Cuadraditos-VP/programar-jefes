@@ -547,7 +547,7 @@ let roT=null;
 let MODOCOD="todos"; try{ MODOCOD=localStorage.getItem("jefes_modocod2")||"todos"; }catch(e){}
 const esRepetido=(p,d)=> d>1 && p.t[d-2]===p.t[d-1] && !EVT.has(d-1);
 const codCelda=(p,d)=>{ const c=p.t[d-1]; if(!c || MODOCOD==="todos" || !esRepetido(p,d)) return c; return MODOCOD==="suave" ? `<span class="rep">${c}</span>` : ""; };
-const VERSION="3.36 · 25/10/2026";
+const VERSION="3.37 · 19/11/2026";
 const DAYS = ["LU","MA","MI","JU","VI","SA","DO"];
 const MESES = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
 const MES_C = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
@@ -565,10 +565,10 @@ const dayCls = d => (FP.has(d)?'fp ':'')+(FER.has(d)?'fer ':'')+(EVT.has(d)?'evt
 const COLORS = {
   "M":["#FFE57A","#000"], "T":["#FFFFFF","#000"], "T1":["#A6F2AB","#000"], "MD":["#F9B278","#000"],
   "N":["#77CEEE","#000"], "NC":["#0061BD","#fff"], "IN":["#C9A6EB","#000"], "F":["#F26A6A","#000"],
-  "14F":["#8E45BF","#fff"], "LAO":["#055124","#fff"], "LIC":["#FFB8D5","#000"], "":["#FFFFFF","#000"]
+  "14F":["#8E45BF","#fff"], "LAO":["#055124","#fff"], "LIC":["#FFB8D5","#000"], "EV":["#D4A017","#000"], "":["#FFFFFF","#000"]
 };
-const CODES = ["M","T","T1","MD","N","NC","IN","F","14F","LAO","LIC",""];
-const BLOQUE = ["LAO","LIC"]; // códigos que se muestran agrupados en un solo bloque
+const CODES = ["M","T","T1","MD","N","NC","IN","F","14F","LAO","LIC","EV",""];
+const BLOQUE = ["LAO","LIC","EV"]; // códigos que se muestran agrupados en un solo bloque (EV: evento especial, ej. Navidad o Año Nuevo)
 /* ---- turnos: códigos, pases prohibidos y preferencias (los usan las reglas, el ámbar y el programador) ---- */
 const TRAB=["MD","M","T","T1","N","NC"];
 const OFFF=["F","14F","LAO","LIC"];            // cuentan como franco (antes / después del franco)
@@ -1036,38 +1036,40 @@ function cellDay(td, clientX){
   return d;
 }
 
-/* ---- ARRASTRAR PARA REPETIR: clic sostenido en un casillero y arrastrar por la fila copia ese turno ---- */
+/* ---- ARRASTRAR PARA REPETIR: clic sostenido en un casillero y arrastrar copia ese turno
+   horizontal (días) y vertical (otros jefes): se llena todo el rectángulo ---- */
 let drag=null, skipClick=false;
 grid.addEventListener("pointerdown",e=>{
   if(SOLO_LECT()) return;
   if(e.pointerType==="touch" || e.button!==0) return;          // con mouse o lápiz
   const td=e.target.closest("td.cell"); if(!td) return;
   const r=+td.dataset.r, d=cellDay(td,e.clientX);
-  drag={r, from:d, to:d, code:people[r].t[d-1]||"", moved:false};
+  drag={r, r2:r, from:d, to:d, code:people[r].t[d-1]||"", moved:false};
   e.preventDefault();
 });
 function markRange(){
   grid.querySelectorAll("td.fillsel").forEach(x=>x.classList.remove("fillsel"));
   if(!drag || !drag.moved) return;
-  const a=Math.min(drag.from,drag.to), b=Math.max(drag.from,drag.to);
-  grid.querySelectorAll(`td.cell[data-r="${drag.r}"]`).forEach(td=>{
-    const d0=+td.dataset.d, d1=d0+td.colSpan-1;
-    if(d1>=a && d0<=b) td.classList.add("fillsel");
+  const a=Math.min(drag.from,drag.to), b=Math.max(drag.from,drag.to), r0=Math.min(drag.r,drag.r2), r1=Math.max(drag.r,drag.r2);
+  grid.querySelectorAll("td.cell").forEach(td=>{
+    const r=+td.dataset.r, d0=+td.dataset.d, d1=d0+td.colSpan-1;
+    if(r>=r0 && r<=r1 && d1>=a && d0<=b) td.classList.add("fillsel");
   });
 }
 document.addEventListener("pointermove",e=>{
   if(!drag) return;
   const el=document.elementFromPoint(e.clientX,e.clientY), td=el && el.closest && el.closest("td.cell");
-  if(!td || +td.dataset.r!==drag.r) return;                   // solo dentro de la misma fila
-  const d=cellDay(td,e.clientX);
-  if(d!==drag.to){ drag.to=d; if(d!==drag.from) drag.moved=true; markRange(); }
+  if(!td) return;
+  const d=cellDay(td,e.clientX), r=+td.dataset.r;
+  if(d!==drag.to || r!==drag.r2){ drag.to=d; drag.r2=r; if(d!==drag.from || r!==drag.r) drag.moved=true; markRange(); }
 });
 document.addEventListener("pointerup",()=>{
   if(!drag) return;
   const dd=drag; drag=null;
-  if(!dd.moved || dd.to===dd.from){ markRange(); return; }
-  const a=Math.min(dd.from,dd.to), b=Math.max(dd.from,dd.to), p=people[dd.r];
-  for(let d=a; d<=b; d++) if(!EVT.has(d) || BLOQUE.includes(dd.code)){ p.t[d-1]=dd.code; manual(p.leg,d); }
+  if(!dd.moved || (dd.to===dd.from && dd.r2===dd.r)){ markRange(); return; }
+  const a=Math.min(dd.from,dd.to), b=Math.max(dd.from,dd.to), r0=Math.min(dd.r,dd.r2), r1=Math.max(dd.r,dd.r2);
+  for(let r=r0; r<=r1; r++){ const p=people[r];
+    for(let d=a; d<=b; d++) if(!EVT.has(d) || BLOQUE.includes(dd.code)){ p.t[d-1]=dd.code; manual(p.leg,d); } }
   skipClick=true; setTimeout(()=>skipClick=false, 50);
   pk.style.display="none"; save(); render();
 });
@@ -1088,7 +1090,7 @@ pkGrid.addEventListener("click",e=>{
   people[target.r].t[target.d-1]=b.dataset.c; manual(people[target.r].leg,target.d); pk.style.display="none"; save(); render();
 });
 
-/* ---- CARGA CON TECLADO: con un casillero elegido, tipeá el código (M, T, T1, MD, N, NC, IN, F, 14F, LAO, LIC) ----
+/* ---- CARGA CON TECLADO: con un casillero elegido, tipeá el código (M, T, T1, MD, N, NC, IN, F, 14F, LAO, LIC, EV) ----
    Enter / Tab / → confirman y pasan al día siguiente · flechas para moverse · Supr o Borrar vacía el casillero · Esc sale */
 let SEL=null, buf="", bufTimer=null;
 const CODIGOS=CODES.filter(c=>c);
