@@ -320,6 +320,8 @@
   td.cell.fuera::before{content:'';position:absolute;left:0;top:0;border-top:7px solid #F59E0B;border-right:7px solid transparent}
   td.cell.fuera{position:relative}
   td.cell.fillsel{box-shadow:inset 0 0 0 3px var(--accent) !important;filter:brightness(.93)}
+  .grid td.cell.ev.jr{border-right-color:#D4A017 !important}   /* EV: sin líneas dentro del bloque */
+  .grid td.cell.ev.jb{border-bottom-color:#D4A017 !important}
   td.lao{text-align:left;padding-left:8px;font-style:italic;font-size:12px;letter-spacing:.5px;white-space:nowrap}
 
   /* columnas auxiliares verticales */
@@ -568,7 +570,9 @@ const COLORS = {
   "14F":["#8E45BF","#fff"], "LAO":["#055124","#fff"], "LIC":["#FFB8D5","#000"], "EV":["#D4A017","#000"], "":["#FFFFFF","#000"]
 };
 const CODES = ["M","T","T1","MD","N","NC","IN","F","14F","LAO","LIC","EV",""];
-const BLOQUE = ["LAO","LIC","EV"]; // códigos que se muestran agrupados en un solo bloque (EV: evento especial, ej. Navidad o Año Nuevo)
+const BLOQUE = ["LAO","LIC"]; // códigos que se muestran agrupados en un solo bloque
+// EV: evento especial (Navidad, Año Nuevo…). Sin texto; los casilleros EV vecinos (a los costados y arriba/abajo) se ven como un solo bloque
+const EV="EV", unido=(a,b)=>!!a && a===b && (a===EV || BLOQUE.includes(a));
 /* ---- turnos: códigos, pases prohibidos y preferencias (los usan las reglas, el ámbar y el programador) ---- */
 const TRAB=["MD","M","T","T1","N","NC"];
 const OFFF=["F","14F","LAO","LIC"];            // cuentan como franco (antes / después del franco)
@@ -951,6 +955,11 @@ function render(){
         const [bg,fg]=COLORS[c]||COLORS[""];
         const o=origVal(p,d), chg = o!==null && o!==(c||"");
         const fp = AMBAR ? [fueraPref(p,c,d), ...avisosCelda(p,d)].filter(Boolean).join(" · ") : "";
+        if(c===EV){ // evento especial: sin texto, se une con los EV de al lado y de abajo
+          const jr = d<N_DAYS && p.t[d]===EV && !EVT.has(d+1), jb = i<n-1 && people[r+1].t[d-1]===EV;
+          h += `<td class="cell ev ${dom(d)} ${d===N_DAYS?'redge':''} ${jr?'jr':''} ${jb?'jb':''} ${chg?'cambio':''}" data-r="${r}" data-d="${d}" style="background:${bg}"></td>`;
+          continue;
+        }
         h += `<td class="cell ${dom(d)} ${d===N_DAYS?'redge':''} ${chg?'cambio':''} ${fp?'fuera':''}" data-r="${r}" data-d="${d}" style="background:${bg};color:${fg}" ${fp?`title="${fp}"`:''}>${codCelda(p,d)}</td>`;
       }
       const {st,vsd}=stats(p);
@@ -1277,7 +1286,7 @@ function drawSheet(){
         }
         const [bg,fg]=COLORS[c]||COLORS[""];
         g.fillStyle=bg; g.fillRect(x,ry,dayW,rowH);
-        if(c){ const rp = MODOCOD!=="todos" && esRepetido(p,d);
+        if(c && c!==EV){ const rp = MODOCOD!=="todos" && esRepetido(p,d);
           if(!rp) text(c, x+dayW/2, cy, `${LET} 7px ${FONT}`, fg);
           else if(MODOCOD==="suave"){ g.globalAlpha=.42; text(c, x+dayW/2, cy, `400 7px ${FONT}`, fg); g.globalAlpha=1; } }
       }
@@ -1289,10 +1298,19 @@ function drawSheet(){
       for(let i=0;i<n;i++){
         const p=people[i0+i];
         // no dibujar línea dentro de bloques LAO
-        const dentro = d>1 && BLOQUE.includes(p.t[d-1]) && p.t[d-1]===p.t[d-2];
+        const dentro = d>1 && unido(p.t[d-1], p.t[d-2]);
         if(!dentro && !SIN_V) line(x, y+i*rowH, x, y+(i+1)*rowH, .5);
       }
     }
+    // EV: tapar las líneas entre casilleros EV vecinos (queda un solo bloque compacto)
+    g.fillStyle=COLORS[EV][0];
+    for(let i=0;i<n;i++){ const p=people[i0+i], ry=y+i*rowH;
+      for(let d=1; d<=N_DAYS; d++){ if(p.t[d-1]!==EV || EVT.has(d)) continue;
+        const jr = d<N_DAYS && p.t[d]===EV && !EVT.has(d+1), jb = i<n-1 && people[i0+i+1].t[d-1]===EV;
+        if(jr) g.fillRect(colX(d)+dayW-1, ry+.4, 2, rowH-.8);
+        if(jb) g.fillRect(colX(d)+.4, ry+rowH-1, dayW-.8, 2);
+        if(jr && jb && p.t[d]===EV && people[i0+i+1].t[d]===EV) g.fillRect(colX(d)+dayW-1, ry+rowH-1, 2, 2);
+      } }
     // bloques de evento especial (uno por grupo)
     EVT.forEach((nm,d)=>{
       const x=colX(d);
@@ -1321,7 +1339,7 @@ function drawSheet(){
       yy+=hdrH;
       for(let i=0;i<n;i++){
         const p=people[i0+i], d=Math.round((x-colX(1))/dayW)+1;
-        if(!(BLOQUE.includes(p.t[d-1]) && p.t[d-1]===p.t[d-2])) line(x, yy+i*rowH, x, yy+(i+1)*rowH, 1.6);
+        if(!unido(p.t[d-1], p.t[d-2])) line(x, yy+i*rowH, x, yy+(i+1)*rowH, 1.6);
       }
       yy+=n*rowH;
     });
