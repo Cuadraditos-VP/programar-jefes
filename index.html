@@ -174,6 +174,16 @@
   #datosPop .ap-row{margin-top:6px}
   .jsonbtn{gap:6px}
   #regConfirm{width:270px;font-size:13px}
+  #pegarPop{width:400px;max-width:calc(100vw - 32px);max-height:80vh;overflow:auto;font-size:13px;left:50%;top:14vh;transform:translateX(-50%);padding:14px}
+  #pegarPop .pg-h{font-weight:800;font-size:14px;margin-bottom:8px}
+  #pegarPop p{margin:0 0 8px;line-height:1.4}
+  #pegarPop .pg-ok{color:#1E6B34;font-weight:700}
+  #pegarPop .pg-warn{background:#FFF6E0;border:1px solid #F5C451;border-radius:8px;padding:8px 10px;margin:0 0 8px}
+  #pegarPop .pg-warn b{display:block;margin-bottom:3px;color:#8A5A00}
+  #pegarPop .pg-warn ul{margin:0;padding-left:18px;font-size:12px;line-height:1.45}
+  #pegarPop .row{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+  #pegarPop .row button{height:32px;padding:0 12px;border-radius:8px;font:700 12px Inter,Arial,sans-serif;cursor:pointer;border:1px solid #C3CCD7;background:#fff}
+  #pegarPop .row button.ok{background:var(--accent);color:#fff;border-color:var(--accent)}
   #regMenu{width:300px;font-size:13px}
   #regCorr{width:300px;font-size:13px}
   #regCorr .rm-h{font-weight:800;margin-bottom:6px}
@@ -530,6 +540,11 @@
   <button class="rc-op" id="rcTodo"><b>Copiar todo el original</b><small>La actual queda igual al original: se pierden todos sus cambios.</small></button>
   <div class="row"><button id="rcNo">Seguir corrigiendo</button></div>
 </div>
+<div class="pop" id="pegarPop">
+  <div class="pg-h">Pegar desde Excel</div>
+  <div id="pgBody"></div>
+  <div class="row" id="pgBtns"></div>
+</div>
 <div class="pop" id="regConfirm">
   <p id="regMsg"></p>
   <div class="row"><button id="regNo">Cancelar</button><button class="ok" id="regYes">Registrar</button></div>
@@ -549,7 +564,7 @@ let roT=null;
 let MODOCOD="todos"; try{ MODOCOD=localStorage.getItem("jefes_modocod2")||"todos"; }catch(e){}
 const esRepetido=(p,d)=> d>1 && p.t[d-2]===p.t[d-1] && !EVT.has(d-1);
 const codCelda=(p,d)=>{ const c=p.t[d-1]; if(!c || MODOCOD==="todos" || !esRepetido(p,d)) return c; return MODOCOD==="suave" ? `<span class="rep">${c}</span>` : ""; };
-const VERSION="3.38 · 19/11/2026";
+const VERSION="3.39 · 19/11/2026";
 const DAYS = ["LU","MA","MI","JU","VI","SA","DO"];
 const MESES = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
 const MES_C = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
@@ -2118,6 +2133,112 @@ document.addEventListener("mousedown",e=>{
   if(!cal.contains(e.target) && !e.target.closest("#mTitle")) cal.style.display="none";
 });
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ pk.style.display="none"; dm.style.display="none"; cal.style.display="none"; } });
+
+/* ---- PEGAR DESDE EXCEL: copiá la grilla en Excel y pegá con Ctrl+V ----
+   · Si lo copiado trae legajos (o nombres), cada fila va a su jefe y los turnos arrancan en el día 1.
+   · Si no, se pega a partir del casillero elegido (hacia la derecha = días, hacia abajo = jefes).
+   Antes de pegar avisa si sobran o faltan días, si hay turnos que no existen o legajos que no están. */
+const pgPop=document.getElementById("pegarPop"), pgBody=document.getElementById("pgBody"), pgBtns=document.getElementById("pgBtns");
+const normCod = v => { const x=String(v).trim().toUpperCase().replace(/\s+/g,""); return (x==="-"||x==="—"||x==="–") ? "" : x; };
+const normNom = v => String(v).trim().toUpperCase().replace(/\s+/g," ").replace(/\s*,\s*/g,", ");
+const lista = (l,max=8) => `<ul>${l.slice(0,max).map(x=>`<li>${x}</li>`).join("")}${l.length>max?`<li>… y ${l.length-max} más</li>`:""}</ul>`;
+function analizarPegado(texto){
+  const filas=texto.replace(/\r/g,"").split("\n").map(l=>l.split("\t"));
+  while(filas.length && filas[filas.length-1].every(c=>!c.trim())) filas.pop();
+  const porLeg=new Map(people.map((p,i)=>[p.leg,i])), porNom=new Map(people.map((p,i)=>[normNom(p.nom),i]));
+  const buscar = row => { for(let k=0;k<row.length;k++){ const v=row[k].trim(); if(porLeg.has(v)) return [porLeg.get(v),k]; if(v && porNom.has(normNom(v))) return [porNom.get(normNom(v)),k]; } return null; };
+  const conJefe = filas.some(buscar);
+  const cambios=[], raros=[], sobran=[], faltan=[], sinJefe=[], avisos=[], vistos=new Set();
+  let ignoradas=0;
+  // pasa los valores de una fila a cambios (las celdas combinadas de LAO / LIC llegan vacías: se completan)
+  function cargar(r, d0, vals){
+    while(vals.length && !vals[vals.length-1].trim()) vals.pop();
+    const p=people[r]; let prev="";
+    vals.forEach((raw,k)=>{
+      const d=d0+k; if(d>N_DAYS) return;
+      let c=normCod(raw);
+      if(!c && BLOQUE.includes(prev)) c=prev;
+      if(c && !CODES.includes(c)){ raros.push(`${esc(p.nom)} · día ${d}: <b>${esc(raw.trim())}</b>`); prev=""; return; }
+      prev=c;
+      if(EVT.has(d) && !BLOQUE.includes(c)) return;                 // día de evento especial: no se toca
+      cambios.push({r,d,c});
+    });
+    return vals.length;
+  }
+  if(conJefe){
+    filas.forEach(row=>{
+      const m=buscar(row);
+      if(!m){ const v=(row.find(c=>c.trim())||"").trim();
+        if(/^\d{4,}$/.test(v)) sinJefe.push(`Legajo ${esc(v)}`); else if(v) ignoradas++;
+        return; }
+      const [r,k]=m; let j=k+1;
+      // salta el nombre (o el legajo) que viene al lado
+      while(j<row.length && row[j].trim() && !CODES.includes(normCod(row[j])) && (porNom.has(normNom(row[j])) || porLeg.has(row[j].trim()) || /[a-zñ]{2,}|,/i.test(row[j]) && normCod(row[j]).length>3)) j++;
+      if(vistos.has(r)) avisos.push(`${esc(people[r].nom)} aparece más de una vez (queda la última)`);
+      vistos.add(r);
+      const n=cargar(r,1,row.slice(j));
+      if(n>N_DAYS) sobran.push(`${esc(people[r].nom)}: trae ${n} días`);
+      else if(n<N_DAYS) faltan.push(`${esc(people[r].nom)}: trae ${n} días`);
+    });
+    const noVino=people.filter((p,i)=>!vistos.has(i)).map(p=>esc(p.nom));
+    if(noVino.length && vistos.size) avisos.push(`No vinieron en lo pegado (quedan como estaban): ${noVino.join(", ")}`);
+  } else {
+    if(!SEL) return {error:"Elegí primero el casillero donde empieza lo pegado (clic en el jefe y el día), o copiá también la columna de legajos o de nombres."};
+    let r=SEL.r, filasFuera=0;
+    filas.forEach(row=>{
+      const llenas=row.filter(c=>c.trim());
+      if(llenas.length && !llenas.some(c=>CODES.includes(normCod(c)) || ["-","—","–"].includes(c.trim()))){ ignoradas++; return; }  // encabezado (días, títulos)
+      if(r>=people.length){ filasFuera++; r++; return; }
+      const n=cargar(r,SEL.d,row.slice());
+      if(SEL.d-1+n>N_DAYS) sobran.push(`${esc(people[r].nom)}: ${SEL.d-1+n-N_DAYS} día(s) de más`);
+      r++;
+    });
+    if(filasFuera) avisos.push(`Sobran ${filasFuera} fila(s): no hay más jefes abajo`);
+  }
+  if(ignoradas) avisos.push(`Se saltearon ${ignoradas} fila(s) sin jefe ni turnos (títulos o encabezados)`);
+  // si un jefe aparece repetido, vale la última vez
+  const fin=new Map(); cambios.forEach(x=>fin.set(x.r+"|"+x.d,x));
+  return {cambios:[...fin.values()], raros, sobran, faltan, sinJefe, avisos, conJefe};
+}
+let pgBackup=null;
+function mostrarPegado(a){
+  if(a.error){ pgBody.innerHTML=`<div class="pg-warn"><b>No se puede pegar</b>${esc(a.error)}</div>`; pgBtns.innerHTML=`<button class="ok" id="pgCerrar">Entendido</button>`; }
+  else {
+    const jefes=new Set(a.cambios.map(x=>x.r)).size, dist=a.cambios.filter(x=>(people[x.r].t[x.d-1]||"")!==x.c).length;
+    let h = a.cambios.length
+      ? `<p>Se van a cargar <b>${a.cambios.length}</b> casilleros de <b>${jefes}</b> jefe(s)${a.conJefe?" (ubicados por legajo o nombre)":` desde ${esc(people[SEL.r].nom)} · día ${SEL.d}`}. Cambian <b>${dist}</b>.</p>`
+      : `<p>No hay turnos para pegar.</p>`;
+    const caja=(t,l)=> l.length ? `<div class="pg-warn"><b>${t}</b>${lista(l)}</div>` : "";
+    h += caja(`Sobran días: el mes tiene ${N_DAYS} (lo que sobra no se pega)`, a.sobran);
+    h += caja(`Faltan días: el mes tiene ${N_DAYS} (los que faltan quedan como estaban)`, a.faltan);
+    h += caja(`Turnos que no existen (no se pegan)`, a.raros);
+    h += caja(`No están en este mes (no se pegan)`, a.sinJefe);
+    h += caja(`Para tener en cuenta`, a.avisos);
+    if(a.cambios.length && !a.sobran.length && !a.faltan.length && !a.raros.length && !a.sinJefe.length) h += `<p class="pg-ok">Todo entra bien: días y turnos correctos.</p>`;
+    pgBody.innerHTML=h;
+    pgBtns.innerHTML = a.cambios.length ? `<button id="pgCerrar">Cancelar</button><button class="ok" id="pgSi">${(a.sobran.length||a.faltan.length||a.raros.length||a.sinJefe.length)?"Pegar igual":"Pegar"}</button>` : `<button class="ok" id="pgCerrar">Cerrar</button>`;
+    const si=document.getElementById("pgSi");
+    if(si) si.onclick=()=>{
+      pgBackup=people.map(p=>p.t.slice());
+      a.cambios.forEach(({r,d,c})=>{ people[r].t[d-1]=c; manual(people[r].leg,d); });
+      save(); render();
+      pgBody.innerHTML=`<p class="pg-ok">Listo: se pegaron ${a.cambios.length} casilleros.</p>`;
+      pgBtns.innerHTML=`<button id="pgUndo">Deshacer</button><button class="ok" id="pgCerrar">Aceptar</button>`;
+      document.getElementById("pgUndo").onclick=()=>{ if(pgBackup){ people.forEach((p,i)=>p.t=pgBackup[i]); pgBackup=null; save(); render(); } pgPop.style.display="none"; };
+      document.getElementById("pgCerrar").onclick=()=>{ pgPop.style.display="none"; };
+    };
+  }
+  document.getElementById("pgCerrar").onclick=()=>{ pgPop.style.display="none"; };
+  pk.style.display="none"; pgPop.style.display="block";
+}
+document.addEventListener("paste",e=>{
+  const tag=(e.target.tagName||"").toLowerCase(); if(tag==="input"||tag==="textarea"||tag==="select") return;
+  if(SOLO_LECT() || document.body.classList.contains("view-pref")) return;
+  const txt=(e.clipboardData||window.clipboardData).getData("text"); if(!txt || !txt.trim()) return;
+  e.preventDefault();
+  mostrarPegado(analizarPegado(txt));
+});
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") pgPop.style.display="none"; });
 
 /* ---- COLORES DE LOS TURNOS: se eligen con el botón de la paleta y quedan guardados (también van en el JSON) ---- */
 const COLORS_FAB=JSON.parse(JSON.stringify(COLORS)), EVC_FAB=["#703850","#FFFFFF"], FONDO_FAB="#E4D8BE";
