@@ -320,8 +320,8 @@
   td.cell.fuera::before{content:'';position:absolute;left:0;top:0;border-top:7px solid #F59E0B;border-right:7px solid transparent}
   td.cell.fuera{position:relative}
   td.cell.fillsel{box-shadow:inset 0 0 0 3px var(--accent) !important;filter:brightness(.93)}
-  .grid td.cell.ev.jr{border-right-color:#D4A017 !important}   /* EV: sin líneas dentro del bloque */
-  .grid td.cell.ev.jb{border-bottom-color:#D4A017 !important}
+  .grid td.cell.ev.jr{border-right-color:var(--evt) !important}   /* EV: sin líneas dentro del bloque */
+  .grid td.cell.ev.jb{border-bottom-color:var(--evt) !important}
   td.lao{text-align:left;padding-left:8px;font-style:italic;font-size:12px;letter-spacing:.5px;white-space:nowrap}
 
   /* columnas auxiliares verticales */
@@ -567,7 +567,7 @@ const dayCls = d => (FP.has(d)?'fp ':'')+(FER.has(d)?'fer ':'')+(EVT.has(d)?'evt
 const COLORS = {
   "M":["#FFE57A","#000"], "T":["#FFFFFF","#000"], "T1":["#A6F2AB","#000"], "MD":["#F9B278","#000"],
   "N":["#77CEEE","#000"], "NC":["#0061BD","#fff"], "IN":["#C9A6EB","#000"], "F":["#F26A6A","#000"],
-  "14F":["#8E45BF","#fff"], "LAO":["#055124","#fff"], "LIC":["#FFB8D5","#000"], "EV":["#D4A017","#000"], "":["#FFFFFF","#000"]
+  "14F":["#8E45BF","#fff"], "LAO":["#055124","#fff"], "LIC":["#FFB8D5","#000"], "EV":["#703850","#FFFFFF"], "":["#FFFFFF","#000"]
 };
 const CODES = ["M","T","T1","MD","N","NC","IN","F","14F","LAO","LIC","EV",""];
 const BLOQUE = ["LAO","LIC"]; // códigos que se muestran agrupados en un solo bloque
@@ -2110,6 +2110,7 @@ function aplicarColores(){
   const c=STORE.colores||{};
   Object.keys(COLORS_FAB).forEach(k=>{ COLORS[k] = (k && c[k]) ? c[k].slice() : COLORS_FAB[k].slice(); });
   EVC = c.EV ? c.EV.slice() : EVC_FAB.slice();
+  COLORS.EV = EVC.slice();   // el código EV usa el mismo color que el evento especial por día
   const fondo = c.FONDO ? c.FONDO[0] : FONDO_FAB;
   let css=`:root{--evt:${EVC[0]};--evt-fg:${EVC[1]};--bg:${fondo}}\n`;
   STAT_COD.forEach((k,i)=>css+=`.s.c${i}{background:${COLORS[k][0]};color:${COLORS[k][1]}}\n`);
