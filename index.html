@@ -549,7 +549,7 @@ let roT=null;
 let MODOCOD="todos"; try{ MODOCOD=localStorage.getItem("jefes_modocod2")||"todos"; }catch(e){}
 const esRepetido=(p,d)=> d>1 && p.t[d-2]===p.t[d-1] && !EVT.has(d-1);
 const codCelda=(p,d)=>{ const c=p.t[d-1]; if(!c || MODOCOD==="todos" || !esRepetido(p,d)) return c; return MODOCOD==="suave" ? `<span class="rep">${c}</span>` : ""; };
-const VERSION="3.37 · 19/11/2026";
+const VERSION="3.38 · 19/11/2026";
 const DAYS = ["LU","MA","MI","JU","VI","SA","DO"];
 const MESES = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
 const MES_C = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
@@ -769,11 +769,23 @@ const TOT = [
 // Los días con evento especial no se cuentan ni se controlan
 const countDay = (d,codes) => (EVT.has(d) && !codes.some(c=>BLOQUE.includes(c))) ? 0 : people.filter(p=>codes.includes(p.t[d-1])).length;
 // filas seguidas (dentro de un grupo) que el evento cubre: todas menos las que están en LAO o LIC
-function evtRunAt(i0,n,d,i){
-  const libre = k => !BLOQUE.includes(people[i0+k].t[d-1]);
-  if(!libre(i) || (i>0 && libre(i-1))) return 0;   // no empieza un tramo acá
-  let len=0; while(i+len<n && libre(i+len)) len++;
-  return len;
+/* Días de evento seguidos (ej. 24 y 25) forman un solo bloque con una sola leyenda */
+function spanEvt(d){ let a=d, b=d; while(EVT.has(a-1)) a--; while(EVT.has(b+1)) b++; return [a,b]; }
+function nombreEvt(a,b){ const l=[]; for(let d=a; d<=b; d++){ const x=EVT.get(d); if(x && !l.includes(x)) l.push(x); } return l.join(" · ") || "Evento especial"; }
+const libreEvt = (r,a,b) => { for(let d=a; d<=b; d++) if(BLOQUE.includes(people[r].t[d-1])) return false; return true; };
+// recorre los bloques de evento de un grupo: fn(día inicial, día final, fila inicial (índice en el grupo), cantidad de filas)
+function bloquesEvt(i0,n,fn){
+  const vistos=new Set();
+  [...EVT.keys()].sort((x,y)=>x-y).forEach(d=>{
+    const [a,b]=spanEvt(d); if(vistos.has(a)) return; vistos.add(a);
+    for(let i=0;i<n;i++){
+      if(libreEvt(i0+i,a,b)){
+        if(i>0 && libreEvt(i0+i-1,a,b)) continue;
+        let len=1; while(i+len<n && libreEvt(i0+i+len,a,b)) len++;
+        fn(a,b,i,len);
+      } else for(let x=a; x<=b; x++) if(!BLOQUE.includes(people[i0+i].t[x-1])) fn(x,x,i,1,true);   // tramo cortado por LAO/LIC
+    }
+  });
 }
 
 /* ---- REGLAS ----
@@ -938,9 +950,14 @@ function render(){
       const r=i0+i, p=people[r];
       h += `<tr class="${i===n-1?"gbot":""}"><td class="leg">${p.leg}</td><td class="nom" title="${p.nom}">${p.nom}</td>`;
       for(let d=1; d<=N_DAYS; d++){
-        if(EVT.has(d) && !BLOQUE.includes(p.t[d-1])){ // evento especial: bloque vertical (LAO y LIC quedan por encima)
-          const len=evtRunAt(i0,n,d,i);
-          if(len){ const nm=EVT.get(d)||"Evento especial"; h += `<td class="evtblock ${dom(d)} ${d===N_DAYS?"redge":""}" rowspan="${len}" data-day="${d}" title="${esc(nm)} · doble clic para editar"><span class="vt">${len>=3?esc(nm):""}</span></td>`; }
+        if(EVT.has(d) && !BLOQUE.includes(p.t[d-1])){ // evento especial: un bloque para los días seguidos y las filas seguidas (LAO y LIC quedan por encima)
+          const [a,b]=spanEvt(d), nm=nombreEvt(a,b), tt=`title="${esc(nm)} · doble clic para editar"`;
+          if(libreEvt(r,a,b)){
+            if(!(i>0 && libreEvt(r-1,a,b))){ let len=1; while(i+len<n && libreEvt(r+len,a,b)) len++;
+              h += `<td class="evtblock ${dom(b)} ${b===N_DAYS?"redge":""}" colspan="${b-a+1}" rowspan="${len}" data-day="${a}" ${tt}><span class="vt">${len>=3?esc(nm):""}</span></td>`; }
+            d=b; continue;
+          }
+          h += `<td class="evtblock ${dom(d)} ${d===N_DAYS?"redge":""}" data-day="${d}" ${tt}></td>`;
           continue;
         }
         const c=p.t[d-1];
@@ -1178,11 +1195,14 @@ document.addEventListener("dblclick",e=>{
 dmFP.onchange=()=>{ dmFP.checked?FP.add(dmDay):FP.delete(dmDay); save(); render(); };
 dmFer.onchange=()=>{ dmFer.checked?FER.add(dmDay):FER.delete(dmDay); save(); render(); };
 dmEvt.onchange=()=>{
-  if(dmEvt.checked){ EVT.set(dmDay, dmEvtName.value.trim()); dmEvtName.style.display="block"; dmEvtName.focus(); }
+  if(dmEvt.checked){ // pegado a otro día de evento: toma su nombre (queda un solo bloque con una sola leyenda)
+    const vec = EVT.get(dmDay-1) || EVT.get(dmDay+1) || "";
+    if(!dmEvtName.value.trim() && vec) dmEvtName.value=vec;
+    EVT.set(dmDay, dmEvtName.value.trim()); dmEvtName.style.display="block"; dmEvtName.focus(); }
   else { EVT.delete(dmDay); dmEvtName.style.display="none"; dmEvtName.value=""; }
   save(); render();
 };
-dmEvtName.oninput=()=>{ if(EVT.has(dmDay)){ EVT.set(dmDay, dmEvtName.value.trim()); save(); render(); } };
+dmEvtName.oninput=()=>{ if(EVT.has(dmDay)){ const [a,b]=spanEvt(dmDay); for(let d=a; d<=b; d++) EVT.set(d, dmEvtName.value.trim()); save(); render(); } };
 dmEvtName.onkeydown=e=>{ if(e.key==="Enter") dm.style.display="none"; };
 
 /* ---- almanaque: navegar y crear meses ---- */
@@ -1312,16 +1332,12 @@ function drawSheet(){
         if(jr && jb && p.t[d]===EV && people[i0+i+1].t[d]===EV) g.fillRect(colX(d)+dayW-1, ry+rowH-1, 2, 2);
       } }
     // bloques de evento especial (uno por grupo)
-    EVT.forEach((nm,d)=>{
-      const x=colX(d);
-      for(let i=0;i<n;i++){
-        const len=evtRunAt(i0,n,d,i); if(!len) continue;
-        const yy=gy+i*rowH, h=len*rowH;
-        g.fillStyle=EVC[0]; g.fillRect(x,yy,dayW,h);
-        line(x,yy,x,yy+h,.5); line(x+dayW,yy,x+dayW,yy+h,.5); line(x,yy,x+dayW,yy,.5); line(x,yy+h,x+dayW,yy+h,.5);
-        if(len>=3){ g.save(); g.translate(x+dayW/2, yy+h/2); g.rotate(-Math.PI/2);
-          text((nm||"Evento especial").toUpperCase(), 0, 0, `700 6.5px ${FONT}`, EVC[1]); g.restore(); }
-      }
+    bloquesEvt(i0,n,(a,b,i,len,suelto)=>{
+      const x=colX(a), w=(b-a+1)*dayW, yy=gy+i*rowH, h=len*rowH;
+      g.fillStyle=EVC[0]; g.fillRect(x,yy,w,h);
+      line(x,yy,x,yy+h,.5); line(x+w,yy,x+w,yy+h,.5); line(x,yy,x+w,yy,.5); line(x,yy+h,x+w,yy+h,.5);
+      if(!suelto && len>=3){ g.save(); g.translate(x+w/2, yy+h/2); g.rotate(-Math.PI/2);
+        text(nombreEvt(a,b).toUpperCase(), 0, 0, `700 6.5px ${FONT}`, EVC[1]); g.restore(); }
     });
     line(X0+legW, y, X0+legW, y+n*rowH, .5);
     GRP.push([y, n*rowH]);
@@ -1339,7 +1355,8 @@ function drawSheet(){
       yy+=hdrH;
       for(let i=0;i<n;i++){
         const p=people[i0+i], d=Math.round((x-colX(1))/dayW)+1;
-        if(!unido(p.t[d-1], p.t[d-2])) line(x, yy+i*rowH, x, yy+(i+1)*rowH, 1.6);
+        const enEvt = EVT.has(d) && EVT.has(d-1) && libreEvt(i0+i, ...spanEvt(d));
+        if(!unido(p.t[d-1], p.t[d-2]) && !enEvt) line(x, yy+i*rowH, x, yy+(i+1)*rowH, 1.6);
       }
       yy+=n*rowH;
     });
