@@ -216,7 +216,7 @@
   .grid .dom{border-right:2px solid var(--line-strong) !important} /* separación domingo | lunes */
   /* el borde derecho lo pone el recuadro (no a los casilleros de días: bajo un bloque de evento
      especial que ocupa varias filas, el día anterior queda último en esas filas y perdía su línea) */
-  .grid tr > :last-child:not(.cell){border-right:0 !important}
+  .grid tr > :last-child:where(:not(.cell)){border-right:0 !important}
   /* ---------- Peso de la letra de los códigos (botón "Aa") ---------- */
   body.let-400 .grid td.cell, body.let-400 .grid td.lao{font-weight:400}
   body.let-700 .grid td.cell, body.let-700 .grid td.lao{font-weight:700}
