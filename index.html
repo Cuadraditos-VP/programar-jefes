@@ -955,11 +955,11 @@ let SHOW_PREV=false; try{ SHOW_PREV = localStorage.getItem("jefes_prev")==="1"; 
 function prevDia(){
   if(!SHOW_PREV || !AMBAR) return null;                    // solo en el original (o mientras el mes no se registró)
   let y=Y, m=MO-1; if(m<1){ m=12; y--; }
-  const pm=STORE.meses[keyOf(y,m)], nd=new Date(y,m,0).getDate();
+  const mm=STORE.meses[keyOf(y,m)], pm=mm && (mm.orig || mm), nd=new Date(y,m,0).getDate();   // del ORIGINAL de ese mes (si todavía no se registró, de su planilla)
   const ab=DAYS[(new Date(y,m-1,nd).getDay()+6)%7], mes=MESES[m-1][0]+MESES[m-1].slice(1).toLowerCase();
   const evt = pm ? (Array.isArray(pm.evt) ? (pm.evt.includes(nd) ? "" : undefined) : (pm.evt||{})[nd]) : undefined;
   const cod = p => pm ? (((pm.t||{})[p.leg]||[])[nd-1] || "") : "";
-  const tit = pm ? `Último día de ${mes} ${y}: ${ab} ${nd}${evt!==undefined?" · "+(evt||"Evento especial"):""} (planilla actual de ese mes, solo de consulta)` : `No hay datos de ${mes} ${y}`;
+  const tit = pm ? `Último día de ${mes} ${y}: ${ab} ${nd}${evt!==undefined?" · "+(evt||"Evento especial"):""} (${mm.orig?"original":"todavía sin registrar"}, solo de consulta)` : `No hay datos de ${mes} ${y}`;
   return {pm, nd, ab, mes, y, evt, cod, tit, fp:!!pm && (pm.fp||[]).includes(nd), fer:!!pm && (pm.fer||[]).includes(nd)};
 }
 function prevCelda(PV,p){
