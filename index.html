@@ -244,6 +244,18 @@
   body.lin-filas tbody.tot td:not(.lab){border-right-color:transparent}
   .grid col.leg{width:54px} .grid col.nom{width:118px}
   .grid col.sp{width:10px} .grid col.s{width:23px}
+  /* último día del mes anterior (solo de consulta, para programar el día 1) */
+  .grid col.prev{width:38px}
+  .grid th.prevh{background:repeating-linear-gradient(135deg,#F1F3F6 0 4px,#E6EAEF 4px 8px) !important;cursor:help;border-right:3px solid var(--line-strong) !important}
+  .grid th.prevh .ab{display:block;font-size:8px;color:var(--muted);font-weight:700;letter-spacing:.3px}
+  .grid th.prevh .nu{display:block;font-size:13px;font-weight:700;margin-top:1px;color:#5C6675}
+  .grid th.prevh.fp .ab{color:#333}
+  .grid th.prevh.fer .nu{color:var(--fer)}
+  .grid td.prevc{border-right:3px solid var(--line-strong) !important;font-weight:600;font-size:10.5px;cursor:help;opacity:.82}
+  .grid td.prevc.vacio{background:repeating-linear-gradient(135deg,#FAFBFC 0 4px,#F1F3F6 4px 8px)}
+  tbody.tot td.prevc{opacity:1;background:transparent}
+  tr.band td.prevc{border-right:0 !important}
+  body.solo-actual:not(.view-pref) #togPrev{display:none}
 
   /* encabezado de días */
   .grid thead th{position:sticky;top:0;z-index:3;background:#fff;height:44px;font-weight:600;border-bottom:2px solid var(--line-strong)}
@@ -442,6 +454,7 @@
       <button class="btnauto" id="btnAuto" title="Programar automáticamente lo que falta del mes"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8l1.4 1.4M17.8 6.2l1.4-1.4M12.2 6.2l-1.4-1.4"/><path d="M3 21l9-9"/></svg>Programar</button>
       <button class="tog regtog" id="regState" aria-pressed="false" title="Alternar entre la planilla actual y el original registrado"><span class="dot"></span><span id="regTxt">Original</span></button>
       <button class="btnreg" id="btnReg" title="Guardar la programación actual como ORIGINAL">Registrar</button>
+      <button class="tog" id="togPrev" aria-pressed="false" title="Mostrar u ocultar el último día del mes anterior (para programar el día 1)"><span class="dot"></span>Día anterior</button>
       <button class="tog cmp" id="togC" aria-pressed="false" style="display:none"><span class="dot"></span><span id="togCtxt">Comparar</span></button>
       <span class="tsep"></span>
       <button class="tog" id="togV" aria-pressed="true" title="Mostrar u ocultar el resumen por jefe"><span class="dot"></span>Resumen</button>
@@ -846,10 +859,10 @@ const auxTd = cls => SHOW_V ? `<td class="${cls}" colspan="${auxCols()}"></td>` 
 
 /* ---- IMPRIMIR: copia la misma grilla de pantalla (sin tablas auxiliares ni totales) y la ajusta a hoja Legal ---- */
 function buildPrint(){
-  const keepV=SHOW_V, keepC=COMPARE;
-  SHOW_V=false; COMPARE=false; render();                 // grilla limpia: sin resumen ni marcas de comparación
+  const keepV=SHOW_V, keepC=COMPARE, keepP=SHOW_PREV;
+  SHOW_V=false; COMPARE=false; SHOW_PREV=false; render();                 // grilla limpia: sin resumen ni marcas de comparación
   const g=document.getElementById("grid").cloneNode(true);
-  SHOW_V=keepV; COMPARE=keepC; render();                 // vuelve a dejar la pantalla como estaba
+  SHOW_V=keepV; COMPARE=keepC; SHOW_PREV=keepP; render();                 // vuelve a dejar la pantalla como estaba
   g.removeAttribute("id"); g.classList.remove("hide-v","hide-h");
   const tot=g.querySelector("tbody.tot"); if(tot) tot.remove();
   g.querySelectorAll("[title]").forEach(e=>e.removeAttribute("title"));
@@ -937,12 +950,38 @@ function fueraPref(p,c,d){
   if(d){ const l=v.dias[dayAb(d)]; if(Array.isArray(l)){ if(!l.length) return `Los ${dayAb(d)} no puede trabajar`; if(!en(l)) return `Los ${dayAb(d)} solo ${l.join(", ")}`; } }
   return "";
 }
+/* ---- ÚLTIMO DÍA DEL MES ANTERIOR: columna de consulta a la izquierda del día 1 (botón "Día anterior") ---- */
+let SHOW_PREV=false; try{ SHOW_PREV = localStorage.getItem("jefes_prev")==="1"; }catch(e){}
+function prevDia(){
+  if(!SHOW_PREV || !AMBAR) return null;                    // solo en el original (o mientras el mes no se registró)
+  let y=Y, m=MO-1; if(m<1){ m=12; y--; }
+  const pm=STORE.meses[keyOf(y,m)], nd=new Date(y,m,0).getDate();   // de la planilla ACTUAL de ese mes
+  const ab=DAYS[(new Date(y,m-1,nd).getDay()+6)%7], mes=MESES[m-1][0]+MESES[m-1].slice(1).toLowerCase();
+  const evt = pm ? (Array.isArray(pm.evt) ? (pm.evt.includes(nd) ? "" : undefined) : (pm.evt||{})[nd]) : undefined;
+  const cod = p => pm ? (((pm.t||{})[p.leg]||[])[nd-1] || "") : "";
+  const tit = pm ? `Último día de ${mes} ${y}: ${ab} ${nd}${evt!==undefined?" · "+(evt||"Evento especial"):""} (planilla actual de ese mes, solo de consulta)` : `No hay datos de ${mes} ${y}`;
+  return {pm, nd, ab, mes, y, evt, cod, tit, fp:!!pm && (pm.fp||[]).includes(nd), fer:!!pm && (pm.fer||[]).includes(nd)};
+}
+function prevCelda(PV,p){
+  const c=PV.cod(p), t=`title="${esc(p.nom)} · ${PV.ab} ${PV.nd} de ${PV.mes}: ${esc(c||(PV.pm?"sin turno":"sin datos"))}"`;
+  if(!PV.pm) return `<td class="prevc vacio" ${t}></td>`;
+  if(PV.evt!==undefined && !BLOQUE.includes(c)) return `<td class="prevc" style="background:var(--evt)" ${t}></td>`;
+  const [bg,fg]=COLORS[c]||COLORS[""];
+  return `<td class="prevc" style="background:${bg};color:${fg}" ${t}>${esc(c)}</td>`;
+}
+document.getElementById("togPrev").setAttribute("aria-pressed", SHOW_PREV);
+document.getElementById("togPrev").onclick=()=>{
+  SHOW_PREV=!SHOW_PREV; document.getElementById("togPrev").setAttribute("aria-pressed", SHOW_PREV);
+  try{ localStorage.setItem("jefes_prev", SHOW_PREV?"1":"0"); }catch(e){}
+  render();
+};
 function render(){
   // ámbar (situaciones no ideales): solo en el original, o mientras el mes todavía no se registró
   AMBAR = !curMonth().orig || !!VER_ORIG;
   // JSON, jefes y preferencias: solo en el original (o mientras el mes no está registrado)
   document.body.classList.toggle("solo-actual", !AMBAR);
-  let h = '<colgroup><col class="leg"><col class="nom">';
+  const PV = prevDia();   // último día del mes anterior (null si está oculto)
+  let h = '<colgroup><col class="leg"><col class="nom">' + (PV ? '<col class="prev">' : '');
   for(let d=1; d<=N_DAYS; d++) h += '<col>';
   if(SHOW_V) h += '<col class="sp">' + '<col class="s">'.repeat(7) + '<col class="sp">' + '<col class="s">'.repeat(3);
   h += '</colgroup>';
@@ -950,6 +989,7 @@ function render(){
   // encabezado
   // fila de días (se usa arriba y abajo de todo, con el mismo formato)
   let dayRow = '<tr><th class="leg corner" colspan="2">%ESQ%</th>';
+  if(PV) dayRow += `<th class="prevh ${PV.fp?'fp':''} ${PV.fer?'fer':''}" title="${esc(PV.tit)}"><span class="ab">${PV.ab}</span><span class="nu">${PV.nd}</span></th>`;
   for(let d=1; d<=N_DAYS; d++) dayRow += `<th class="dh ${dayCls(d)} ${dom(d)} ${d===N_DAYS?'redge':''} ${dayChanged(d)?'cambio':''}" data-day="${d}" ${EVT.has(d)?`title="${esc(EVT.get(d)||"Evento especial")}"`:""}><span class="ab">${dayAb(d)}</span><span class="nu">${d}</span></th>`;
   if(SHOW_V){
   dayRow += '<th class="sp"></th>' + STAT.map(([l],k)=>`<th class="s c${k} ${k===0?'first':''} ${k===6?'last':''}">${l}</th>`).join('');
@@ -961,11 +1001,12 @@ function render(){
   // personas por grupo
   GROUPS_DEF.forEach(([name,i0,n],gi)=>{
     const ultimo = gi===GROUPS_DEF.length-1;
-    const esp = `<tr class="band"><td class="bl" colspan="2"></td><td colspan="${N_DAYS}"></td>${auxTd('sp')}</tr>`;
+    const esp = `<tr class="band"><td class="bl" colspan="2"></td><td colspan="${N_DAYS+(PV?1:0)}"></td>${auxTd('sp')}</tr>`;
     h += `<tbody class="people">` + (gi>0 ? esp + dayRow.replace('<tr>','<tr class="medio">').replace('%ESQ%',`GRUPO ${gi+1}`) : "");
     for(let i=0;i<n;i++){
       const r=i0+i, p=people[r];
       h += `<tr class="${i===n-1?"gbot":""}"><td class="leg">${p.leg}</td><td class="nom" title="${p.nom}">${p.nom}</td>`;
+      if(PV) h += prevCelda(PV,p);
       for(let d=1; d<=N_DAYS; d++){
         if(EVT.has(d) && !BLOQUE.includes(p.t[d-1])){ // evento especial: un bloque para los días seguidos y las filas seguidas (LAO y LIC quedan por encima)
           const [a,b]=spanEvt(d), nm=nombreEvt(a,b), tt=`title="${esc(nm)} · doble clic para editar"`;
@@ -1011,9 +1052,10 @@ function render(){
   });
 
   // totales por día + francos patrones
-  h += `<tbody class="tot"><tr class="gap"><td class="bl" colspan="2"></td><td colspan="${N_DAYS}"></td>${auxTd('blank')}</tr>`;
+  h += `<tbody class="tot"><tr class="gap"><td class="bl" colspan="2"></td><td colspan="${N_DAYS+(PV?1:0)}"></td>${auxTd('blank')}</tr>`;
   TOT.forEach(([lab,cls,codes])=>{
     h += `<tr class="${cls}"><td class="lab" colspan="2">${lab}</td>`;
+    if(PV){ const n=PV.pm ? people.filter(p=>codes.includes(PV.cod(p))).length : 0; h += `<td class="prevc">${n||''}</td>`; }
     for(let d=1; d<=N_DAYS; d++){
       const n=countDay(d,codes), msg = (!EVT.has(d) && REGLAS_DIA[lab]) ? REGLAS_DIA[lab](n,d) : "";
       const av = (AMBAR && !msg && !EVT.has(d) && AVISOS_DIA[lab]) ? AVISOS_DIA[lab](n,d) : "";
