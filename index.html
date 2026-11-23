@@ -449,7 +449,7 @@
   <label><input type="checkbox" id="dmFP"><span class="sw" style="background:var(--fp)"></span>Franco patrón</label>
   <label><input type="checkbox" id="dmFer"><span class="sw" style="background:#fff;border-color:var(--fer);box-shadow:inset 0 -3px 0 var(--fer)"></span>Feriado</label>
   <label><input type="checkbox" id="dmEvt"><span class="sw" style="background:var(--evt)"></span>Evento especial</label>
-  <input type="text" id="dmEvtName" maxlength="40" placeholder="Paro, elecciones, Navidad…">
+  <input type="text" id="dmEvtName" maxlength="40" placeholder="Nombre (vacío = sin texto)">
 </div>
 <div class="pop" id="jefesPanel">
   <div class="jp-h"><b>Jefes</b><span id="jpMes"></span></div>
@@ -526,7 +526,7 @@ let roT=null;
 let MODOCOD="todos"; try{ MODOCOD=localStorage.getItem("jefes_modocod2")||"todos"; }catch(e){}
 const esRepetido=(p,d)=> d>1 && p.t[d-2]===p.t[d-1] && !EVT.has(d-1);
 const codCelda=(p,d)=>{ const c=p.t[d-1]; if(!c || MODOCOD==="todos" || !esRepetido(p,d)) return c; return MODOCOD==="suave" ? `<span class="rep">${c}</span>` : ""; };
-const VERSION="4.2 · 23/11/2026";
+const VERSION="4.3 · 23/11/2026";
 const DAYS = ["LU","MA","MI","JU","VI","SA","DO"];
 const MESES = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
 const MES_C = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
@@ -735,7 +735,7 @@ const countDay = (d,codes) => (EVT.has(d) && !codes.some(c=>BLOQUE.includes(c)))
 // filas seguidas (dentro de un grupo) que el evento cubre: todas menos las que están en LAO o LIC
 /* Días de evento seguidos (ej. 24 y 25) forman un solo bloque con una sola leyenda */
 function spanEvt(d){ let a=d, b=d; while(EVT.has(a-1)) a--; while(EVT.has(b+1)) b++; return [a,b]; }
-function nombreEvt(a,b){ const l=[]; for(let d=a; d<=b; d++){ const x=EVT.get(d); if(x && !l.includes(x)) l.push(x); } return l.join(" · ") || "Evento especial"; }
+function nombreEvt(a,b){ const l=[]; for(let d=a; d<=b; d++){ const x=EVT.get(d); if(x && !l.includes(x)) l.push(x); } return l.join(" · "); }   // sin nombre = el bloque va sin texto
 const libreEvt = (r,a,b) => { for(let d=a; d<=b; d++) if(BLOQUE.includes(people[r].t[d-1])) return false; return true; };
 // recorre los bloques de evento de un grupo: fn(día inicial, día final, fila inicial (índice en el grupo), cantidad de filas)
 function bloquesEvt(i0,n,fn){
@@ -940,7 +940,7 @@ function render(){
       if(PV) h += prevCelda(PV,p);
       for(let d=1; d<=N_DAYS; d++){
         if(EVT.has(d) && !BLOQUE.includes(p.t[d-1])){ // evento especial: un bloque para los días seguidos y las filas seguidas (LAO y LIC quedan por encima)
-          const [a,b]=spanEvt(d), nm=nombreEvt(a,b), tt=`title="${esc(nm)} · doble clic para editar"`;
+          const [a,b]=spanEvt(d), nm=nombreEvt(a,b), tt=`title="${esc(nm||"Evento especial (sin texto)")} · doble clic para editar"`;
           if(libreEvt(r,a,b)){
             if(!(i>0 && libreEvt(r-1,a,b))){ let len=1; while(i+len<n && libreEvt(r+len,a,b)) len++;
               h += `<td class="evtblock ${dom(b)} ${b===N_DAYS?"redge":""}" colspan="${b-a+1}" rowspan="${len}" data-day="${a}" ${tt}><span class="vt">${len>=3?esc(nm):""}</span></td>`; }
