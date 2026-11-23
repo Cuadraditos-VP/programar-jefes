@@ -31,14 +31,14 @@ El video de apertura ya está incluido dentro de `index.html` (no hace falta nin
 
 ## Tus datos
 
-Los datos (meses, turnos, jefes, preferencias) se guardan en el navegador de cada dispositivo. **No viajan solos entre dispositivos ni desde el archivo que usabas antes.** Para pasarlos:
+La programación (meses, turnos, jefes, preferencias y colores) se guarda en **Firebase** y es la misma para todos los usuarios: lo que cambia uno lo ven los demás al momento. Cada navegador guarda además una copia para abrir al instante y sin internet; lo que se cambie sin conexión se manda cuando vuelve.
 
-1. En el lugar donde ya tenés los datos, tocá el botón **JSON** → *Todo* → **Exportar JSON**. Se descarga `jefes_datos_AAAA-MM-DD.json`.
-2. En la app publicada, botón **JSON** → **Importar JSON…** y elegí ese archivo. *Combinar* agrega/actualiza los meses del archivo; *Reemplazar todo* deja exactamente lo del archivo. Antes de importar se descarga sola una copia de lo que había.
+- **Entrar:** el administrador entra con su cuenta de Google. Los demás, con un **código de invitación** de 6 números que el administrador crea desde el botón de la nube (☁ → Invitar). Cada código sirve para una sola computadora/navegador.
+- **Quitar el acceso:** ☁ → Quitar.
+- El botón de la nube muestra un puntito: verde = todo guardado, amarillo = guardando, rojo = problema.
+- Las reglas de Firebase están en `REGLAS-FIREBASE.md`.
 
-También podés exportar **solo el mes** que estás viendo (por ejemplo, para mandárselo a otra persona).
-
-Conviene exportar una copia de vez en cuando como resguardo.
+El botón **JSON** sigue sirviendo para guardar una copia o importar meses.
 
 ## Actualizar la app
 
