@@ -370,6 +370,7 @@
   .cal-g button:hover:not(.cur){border-color:var(--accent)}
   .cal-f{margin-top:10px;font-size:12px;color:var(--muted);min-height:34px;display:flex;align-items:center;justify-content:space-between;gap:8px}
   .cal-f span{flex:1;line-height:1.35}
+  .cal-f .go.cal-del{background:#fff;color:#A00000;border:1px solid #E3B4B4}
   .cal-f .go{white-space:nowrap;height:32px;padding:0 12px;border:0;border-radius:8px;background:var(--accent);color:#fff;font:700 12px Inter,Arial,sans-serif;cursor:pointer}
 
   /* ---------- Selectores ---------- */
@@ -526,7 +527,7 @@ let roT=null;
 let MODOCOD="todos"; try{ MODOCOD=localStorage.getItem("jefes_modocod2")||"todos"; }catch(e){}
 const esRepetido=(p,d)=> d>1 && p.t[d-2]===p.t[d-1] && !EVT.has(d-1);
 const codCelda=(p,d)=>{ const c=p.t[d-1]; if(!c || MODOCOD==="todos" || !esRepetido(p,d)) return c; return MODOCOD==="suave" ? `<span class="rep">${c}</span>` : ""; };
-const VERSION="4.3 · 23/11/2026";
+const VERSION="4.4 · 23/11/2026";
 const DAYS = ["LU","MA","MI","JU","VI","SA","DO"];
 const MESES = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
 const MES_C = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
@@ -1209,6 +1210,10 @@ function drawCal(){
     f.innerHTML=`<span>${MESES[m-1][0]+MESES[m-1].slice(1).toLowerCase()} ${y} todavía no existe</span><button class="go" id="calCreate">Crear mes</button>`;
     document.getElementById("calCreate").onclick=()=>{ createMonth(calSel); cal.style.display="none"; };
   } else f.innerHTML=`<span>Meses creados en color · <b>+</b> para crear uno nuevo</span>`;
+  if(typeof abrirBorrarMeses==="function" && NUBE.rol==="admin" && NUBE.ok){
+    f.insertAdjacentHTML("beforeend",`<button class="go cal-del" id="calDel">🗑 Borrar meses…</button>`);
+    document.getElementById("calDel").onclick=()=>{ cal.style.display="none"; abrirBorrarMeses(); };
+  }
 }
 document.getElementById("mTitle").onclick=e=>{
   if(cal.style.display==="block"){ cal.style.display="none"; return; }
@@ -2184,12 +2189,30 @@ loadMonth(STORE.meses[STORE.actual] ? STORE.actual : Object.keys(STORE.meses).so
   <button class="nb-hist" id="nbHist">📜 Historial de cambios</button>
   <div class="row"><button id="nbCerrar">Cerrar</button></div>
 </div>
+<div class="pop" id="borrarPop">
+  <div class="nb-h">Borrar meses</div>
+  <p>Los meses marcados desaparecen para todos, como si nunca se hubieran creado. Ya vienen marcados los que están vacíos.</p>
+  <div id="bmLista"></div>
+  <p id="bmMsg"></p>
+  <div class="row"><button id="bmNo">Cancelar</button><button class="bm-ok" id="bmOk">Borrar</button></div>
+</div>
 <div class="pop" id="histPop">
   <div class="nb-h">Historial de cambios</div>
   <div id="hsLista"></div>
   <div class="row"><button id="hsCerrar">Cerrar</button></div>
 </div>
 <style>
+  #borrarPop{width:380px;max-width:calc(100vw - 16px);font-size:13px;padding:14px;left:50%;top:10vh;transform:translateX(-50%)}
+  #borrarPop .nb-h{font-weight:800;font-size:14px;margin-bottom:6px}
+  #borrarPop p{margin:0 0 8px;color:#3A4655;line-height:1.4}
+  #bmMsg{color:#C00000 !important}
+  #bmLista{max-height:55vh;overflow:auto;border:1px solid #DDE3EA;border-radius:8px;margin-bottom:8px}
+  .bm-it{display:flex;gap:8px;align-items:center;padding:7px 10px;border-bottom:1px solid #EEF1F4;cursor:pointer}
+  .bm-it:last-child{border-bottom:0}
+  .bm-it small{color:#6B7685}
+  #borrarPop .row{display:flex;justify-content:flex-end;gap:8px}
+  #borrarPop .row button{height:32px;padding:0 12px;border-radius:8px;font:700 12px Inter,Arial,sans-serif;cursor:pointer;border:1px solid #C3CCD7;background:#fff}
+  #borrarPop .row .bm-ok{background:#C00000;color:#fff;border-color:#C00000}
   #histPop{width:460px;max-width:calc(100vw - 16px);font-size:13px;padding:14px;left:50%;top:8vh;transform:translateX(-50%)}
   #histPop .nb-h{font-weight:800;font-size:14px;margin-bottom:8px}
   #hsLista{max-height:70vh;overflow:auto;border:1px solid #DDE3EA;border-radius:8px}
@@ -2414,8 +2437,12 @@ function recibir(snap){
   }
   let cambio=false;
   snap.docChanges().forEach(ch=>{
-    if(ch.type==="removed") return;
-    const id=ch.doc.id, R=ch.doc.data();
+    const id=ch.doc.id;
+    if(ch.type==="removed"){   // otro borró un mes: acá también desaparece
+      if(id.startsWith("mes_") && STORE.meses[id.slice(4)]){ const k=id.slice(4); delete STORE.meses[k]; delete NUBE_BASE[id]; delete NUBE_POR[k]; cambio=true; }
+      return;
+    }
+    const R=ch.doc.data();
     if(id==="general"){
       const g=mezclarGeneral(NUBE_BASE.general, docGeneral(), R);
       STORE.prefs=g.prefs||{}; if(g.colores) STORE.colores=g.colores; else delete STORE.colores;
@@ -2672,6 +2699,30 @@ document.getElementById("nbSalir").onclick=async()=>{
   cerrarNube(); try{ localStorage.removeItem("progr_ok"); }catch(e){}
   NUBE.ok=false; if(NUBE.desuscribir){ NUBE.desuscribir(); NUBE.desuscribir=null; }
   await nAuth.signOut();
+};
+// borrar meses enteros (solo el admin): desaparecen para todos, como si nunca se hubieran creado
+const bmPop=document.getElementById("borrarPop");
+function mesVacio(m){ return !Object.values(m.t||{}).some(a=>(a||[]).some(x=>x)) && !(m.fp||[]).length && !(m.fer||[]).length && !Object.keys(Array.isArray(m.evt)?{}:(m.evt||{})).length && !(Array.isArray(m.evt)&&m.evt.length); }
+function abrirBorrarMeses(){
+  const ks=Object.keys(STORE.meses).sort();
+  document.getElementById("bmLista").innerHTML = ks.map(k=>{ const v=mesVacio(STORE.meses[k]);
+    return `<label class="bm-it"><input type="checkbox" value="${k}" ${v?"checked":""}> <span><b>${nomMes(k)}</b> <small>${v?"vacío":"tiene turnos cargados"}${STORE.meses[k].reg?" · registrado":""}</small></span></label>`; }).join("");
+  document.getElementById("bmMsg").textContent="";
+  bmPop.style.display="block";
+}
+document.getElementById("bmNo").onclick=()=>{ bmPop.style.display="none"; };
+document.getElementById("bmOk").onclick=async()=>{
+  const sel=[...document.querySelectorAll("#bmLista input:checked")].map(x=>x.value), msg=document.getElementById("bmMsg");
+  if(!sel.length){ msg.textContent="No elegiste ningún mes."; return; }
+  if(sel.length>=Object.keys(STORE.meses).length){ msg.textContent="Tiene que quedar al menos un mes."; return; }
+  const conDatos=sel.filter(k=>!mesVacio(STORE.meses[k]));
+  if(!confirm(`¿Borrar ${sel.length===1?nomMes(sel[0]):sel.length+" meses"} para todos?${conDatos.length?`\n\nAtención: ${conDatos.map(nomMes).join(", ")} ${conDatos.length===1?"tiene":"tienen"} turnos cargados y se pierden.`:""}\n\nNo se puede deshacer.`)) return;
+  bmPop.style.display="none";
+  sel.forEach(k=>{ delete STORE.meses[k]; delete NUBE_BASE["mes_"+k]; delete NUBE_POR[k]; nubeEscribir(nDb.collection(C_DATOS).doc("mes_"+k).delete()); });
+  historial({otros:[`borró ${sel.length===1?"el mes":"los meses"} ${sel.map(nomMes).join(", ")}`]});
+  guardarBase(); guardarLocal();
+  if(!STORE.meses[keyOf(Y,MO)]) loadMonth(Object.keys(STORE.meses).sort().pop()); else refrescarVista();
+  nubeMsg(sel.length===1?"Mes borrado":"Meses borrados");
 };
 // historial: los últimos 150 cambios
 const hsPop=document.getElementById("histPop");
