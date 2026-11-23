@@ -499,7 +499,7 @@
   <label class="rm-op"><input type="radio" name="rmAcc" value="corregir" checked> <span><b>Corregir el mes</b><br><small>Lo deja abierto para modificarlo. Al tocar el botón rojo “Registrar” vuelve a quedar congelado.</small></span></label>
   <label class="rm-op"><input type="radio" name="rmAcc" value="todo"> <span><b>Borrar todo el mes</b><br><small>Vacía todos los casilleros y lo deja abierto para volver a armarlo (podés usar Programar).</small></span></label>
   <label class="rm-op"><input type="radio" name="rmAcc" value="parcial"> <span><b>Borrar menos francos, LIC y LAO</b><br><small>Vacía los turnos, deja F, 14F, LIC y LAO, y lo deja abierto para volver a armarlo.</small></span></label>
-  <input type="password" id="rmClave" inputmode="numeric" autocomplete="off" placeholder="Clave">
+  <input type="password" id="rmClave" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="Tu clave (4 números)">
   <p id="rmMsg"></p>
   <div class="row"><button id="rmNo">Cancelar</button><button class="ok" id="rmOk">Aceptar</button></div>
 </div>
@@ -527,7 +527,7 @@ let roT=null;
 let MODOCOD="todos"; try{ MODOCOD=localStorage.getItem("jefes_modocod2")||"todos"; }catch(e){}
 const esRepetido=(p,d)=> d>1 && p.t[d-2]===p.t[d-1] && !EVT.has(d-1);
 const codCelda=(p,d)=>{ const c=p.t[d-1]; if(!c || MODOCOD==="todos" || !esRepetido(p,d)) return c; return MODOCOD==="suave" ? `<span class="rep">${c}</span>` : ""; };
-const VERSION="4.4 · 23/11/2026";
+const VERSION="4.5 · 23/11/2026";
 const DAYS = ["LU","MA","MI","JU","VI","SA","DO"];
 const MESES = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
 const MES_C = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
@@ -703,7 +703,7 @@ function updateRegUI(){
   if(!r || EDIT_ORIG){ br.textContent="Registrar"; br.title = EDIT_ORIG ? "Terminar la corrección y volver a congelar el mes" : "Dar el mes por terminado (queda congelado)"; return; }
   const f=new Date(r), ff=f.toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit"})+" "+f.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",hour12:false});
   br.textContent=`Registrado ${f.toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit"})}`;
-  br.title=`Registrado el ${ff} (congelado). Tocá para corregirlo o borrarlo (pide clave)`;
+  br.title=`Registrado el ${ff} (congelado). Tocá para corregirlo o borrarlo (pide tu clave)`;
 }
 function createMonth(k){
   if(!STORE.meses[k]){
@@ -1938,26 +1938,32 @@ document.getElementById("btnShare").onclick=compartirImagen;
 window.addEventListener("beforeprint", buildPrint); // también si imprimen con Ctrl+P
 /* ---- botón Registrar ---- */
 const rc=document.getElementById("regConfirm");
-const rmn=document.getElementById("regMenu"), CLAVE="1318";
+const rmn=document.getElementById("regMenu");   // pide la clave de 4 números de quien está usando la app
 document.getElementById("btnReg").onclick=e=>{
   const r=e.currentTarget.getBoundingClientRect();
   if(curMonth().reg && !EDIT_ORIG){                // registrado: opciones con clave
     document.getElementById("rmClave").value=""; document.getElementById("rmMsg").textContent="";
+    document.getElementById("rmClave").style.display = (typeof NUBE!=="undefined" && NUBE.rol==="admin") ? "none" : "";   // el admin ya entró con Google
     rmn.style.left=Math.max(8,Math.min(r.left, innerWidth-320))+"px"; rmn.style.top=(r.bottom+6)+"px"; rmn.style.display="block";
     setTimeout(()=>document.getElementById("rmClave").focus(),50);
     return;
   }
   document.getElementById("regMsg").innerHTML = EDIT_ORIG
     ? `¿Terminar la corrección? El mes vuelve a quedar <b>congelado</b> (solo lectura).`
-    : `Se va a dar el mes por terminado y quedará <b>congelado</b> (solo lectura). Para corregirlo después hace falta la clave. ¿Registrar?`;
+    : `Se va a dar el mes por terminado y quedará <b>congelado</b> (solo lectura). Para corregirlo después hace falta tu clave. ¿Registrar?`;
   rc.style.left=Math.max(8,Math.min(r.left, innerWidth-290))+"px"; rc.style.top=(r.bottom+6)+"px"; rc.style.display="block";
 };
 document.getElementById("regYes").onclick=()=>{ rc.style.display="none"; if(EDIT_ORIG) terminarCorreccion(); else if(!curMonth().reg) registrar(); };
 document.getElementById("rmNo").onclick=()=>{ rmn.style.display="none"; };
 document.getElementById("rmClave").addEventListener("keydown",e=>{ if(e.key==="Enter") document.getElementById("rmOk").click(); });
-document.getElementById("rmOk").onclick=()=>{
+document.getElementById("rmOk").onclick=async()=>{
   const msg=document.getElementById("rmMsg");
-  if(document.getElementById("rmClave").value!==CLAVE){ msg.textContent="Clave incorrecta."; document.getElementById("rmClave").select(); return; }
+  const okBtn=document.getElementById("rmOk"); if(okBtn.disabled) return;
+  okBtn.disabled=true; msg.textContent="Revisando la clave…";
+  const r = typeof verificarClave==="function" ? await verificarClave(document.getElementById("rmClave").value.replace(/\D/g,"")) : "sin";
+  okBtn.disabled=false;
+  if(r!==true){ msg.textContent = r==="sin" ? "Hace falta internet para revisar la clave." : r==="muchos" ? "Demasiados intentos. Esperá unos minutos." : "Clave incorrecta."; document.getElementById("rmClave").select(); return; }
+  msg.textContent="";
   const acc=document.querySelector('input[name="rmAcc"]:checked').value;
   rmn.style.display="none";
   EDIT_ORIG=true; document.body.classList.add("edit-orig");
@@ -2508,7 +2514,7 @@ async function rolDe(user){
   return {rol:"usuario", nombre:u.data().nombre||"", leg:u.data().leg};
 }
 function entrar(r){
-  NUBE.rol=r.rol; NUBE.nombre=r.nombre;
+  NUBE.rol=r.rol; NUBE.nombre=r.nombre; NUBE.leg=r.leg||null;
   try{ localStorage.setItem("progr_ok", r.rol); }catch(e){}
   ocultarGate(); nubeEstado(); escuchar();
   if(r.rol==="usuario") nDb.collection(C_USU).doc(nAuth.currentUser.uid).update({ult:Date.now()}).catch(()=>{});
@@ -2700,6 +2706,18 @@ document.getElementById("nbSalir").onclick=async()=>{
   NUBE.ok=false; if(NUBE.desuscribir){ NUBE.desuscribir(); NUBE.desuscribir=null; }
   await nAuth.signOut();
 };
+// la clave de 4 números de quien está usando la app (para corregir o borrar un mes registrado)
+async function verificarClave(cl){
+  if(NUBE.rol==="admin") return true;                 // el admin ya entró con su cuenta de Google
+  if(!nAuth || !nAuth.currentUser || !NUBE.leg || !navigator.onLine) return "sin";
+  if(cl.length!==4) return false;
+  try{
+    const c=await nDb.collection(C_CTA).doc(String(NUBE.leg)).get();
+    if(!c.exists) return false;
+    await nAuth.currentUser.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(correoDe(NUBE.leg,c.data().v), passDe(NUBE.leg,cl)));
+    return true;
+  }catch(e){ const k=e&&e.code||""; return k==="auth/too-many-requests" ? "muchos" : k==="auth/network-request-failed"||k==="unavailable" ? "sin" : false; }
+}
 // borrar meses enteros (solo el admin): desaparecen para todos, como si nunca se hubieran creado
 const bmPop=document.getElementById("borrarPop");
 function mesVacio(m){ return !Object.values(m.t||{}).some(a=>(a||[]).some(x=>x)) && !(m.fp||[]).length && !(m.fer||[]).length && !Object.keys(Array.isArray(m.evt)?{}:(m.evt||{})).length && !(Array.isArray(m.evt)&&m.evt.length); }
