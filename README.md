@@ -33,10 +33,11 @@ El video de apertura ya está incluido dentro de `index.html` (no hace falta nin
 
 La programación (meses, turnos, jefes, preferencias y colores) se guarda en **Firebase** y es la misma para todos los usuarios: lo que cambia uno lo ven los demás al momento. Cada navegador guarda además una copia para abrir al instante y sin internet; lo que se cambie sin conexión se manda cuando vuelve.
 
-- **Entrar:** el administrador entra con su cuenta de Google. Los demás, con su **legajo y una clave de 4 números**, en cualquier computadora o navegador.
-- **Invitar:** ☁ → nombre y legajo → Invitar. Da un código de 6 números: la primera vez el usuario lo escribe y elige su clave.
+- **Entrar:** el administrador entra con su cuenta de Google. Los demás, con su **nombre y una clave de 4 números**, en cualquier computadora o navegador.
+- **Invitar:** ☁ → nombre → Invitar. Da un código de 6 números: la primera vez el usuario lo escribe y elige su clave.
 - **Se olvidó la clave:** ☁ → Clave nueva (le das otro código). **Quitar el acceso:** ☁ → Quitar (sale de todas las computadoras).
 - El botón de la nube muestra un puntito: verde = todo guardado, amarillo = guardando, rojo = problema.
+- **Quién cambió qué:** al pasar el mouse por un casillero (o al tocarlo) se ve quién lo cambió por última vez; ☁ → Historial de cambios muestra todo.
 - Las reglas de Firebase están en `REGLAS-FIREBASE.md`.
 
 ## Actualizar la app

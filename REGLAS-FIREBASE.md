@@ -6,13 +6,14 @@ También tiene que estar activado **Correo electrónico/contraseña** en Authent
 
 - `progr_jefes`: la programación (un doc por mes `mes_AAAA-MM` y `general` con preferencias y colores).
 - `progr_invitados/{código}`: invitaciones que crea el admin (nombre, legajo, v).
-- `progr_cuentas/{legajo}`: la cuenta de cada legajo (correo inventado `p<legajo>-<v>@progrjefes.example.com`, contraseña `vp<clave>-<legajo>`).
+- `progr_cuentas/{usuario}`: la cuenta de cada usuario (correo inventado `p<usuario>-<v>@progrjefes.example.com`, contraseña `vp<clave>-<usuario>`).
   Clave nueva = se borra y se hace otra invitación (con otro `v`). Quitar = se borra.
-- `progr_usuarios/{uid}`: uid → legajo y nombre.
+- `progr_usuarios/{uid}`: uid → usuario (el nombre sin acentos ni espacios, ej. `juanperez`) y nombre.
+- `progr_historial`: quién hizo cada cambio y cuándo (cada casillero además guarda el último en `por`).
 
 ```
     // ===== NUEVO: Programación Jefes (la app para armar la programación) =====
-    // Cada usuario entra con legajo + clave de 4 números (una cuenta por legajo, en progr_cuentas).
+    // Cada usuario entra con nombre + clave de 4 números (una cuenta por usuario, en progr_cuentas).
     function esUsuarioProg() {
       return request.auth != null
         && exists(/databases/$(database)/documents/progr_usuarios/$(request.auth.uid))
@@ -45,7 +46,12 @@ También tiene que estar activado **Correo electrónico/contraseña** en Authent
         && invProg(request.resource.data.code).leg == legajo
         && invProg(request.resource.data.code).v == request.resource.data.v);
     }
-    // Quién es cada cuenta (uid → legajo y nombre)
+    // Historial: quién cambió qué. Lo agregan los usuarios (a su nombre); se borra solo desde la consola.
+    match /progr_historial/{id} {
+      allow read: if esAdmin() || esUsuarioProg();
+      allow create: if (esAdmin() || esUsuarioProg()) && request.resource.data.uid == request.auth.uid;
+    }
+    // Quién es cada cuenta (uid → usuario y nombre)
     match /progr_usuarios/{uid} {
       allow get: if esAdmin() || (request.auth != null && request.auth.uid == uid);
       allow list, delete: if esAdmin();
