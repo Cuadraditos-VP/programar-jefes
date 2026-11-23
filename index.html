@@ -2438,13 +2438,15 @@ function escuchar(){
 let subidaHecha=false;
 function ofrecerSubida(){
   if(subidaHecha) return; subidaHecha=true;   // una sola vez (el aviso del servidor puede llegar dos veces)
-  const n=Object.keys(STORE.meses).length;
-  if(!confirm(`Firebase todavía no tiene la programación.\n\n¿Subir la de esta computadora (${n} ${n===1?"mes":"meses"}, preferencias y colores) para que la usen todos?`)){ subidaHecha=false; nubeMsg("Sin subir: los datos siguen solo en esta computadora."); return; }
+  // se empieza de cero: un solo mes (el que viene) vacío, con la lista de jefes, preferencias y colores de esta computadora
+  const hoy=new Date(), k=keyOf(hoy.getMonth()===11?hoy.getFullYear()+1:hoy.getFullYear(), hoy.getMonth()===11?1:hoy.getMonth()+2);
+  const ult=Object.keys(STORE.meses).sort().pop(), jefes=(ult && STORE.meses[ult].jefes) ? STORE.meses[ult].jefes.map(j=>({...j})) : ROSTER_BASE.map(j=>({...j}));
+  if(!confirm(`Firebase todavía no tiene la programación.\n\n¿Empezar de cero? Se crea ${nomMes(k)} vacío, con la lista de jefes, las preferencias y los colores de esta computadora. Los meses viejos no se suben.`)){ subidaHecha=false; nubeMsg("Todavía no se empezó: tocá F5 para que lo vuelva a preguntar."); return; }
   const col=nDb.collection(C_DATOS), b=nDb.batch();
-  Object.keys(STORE.meses).forEach(k=>b.set(col.doc("mes_"+k), aDoc(k,STORE.meses[k])));
+  b.set(col.doc("mes_"+k), aDoc(k,{t:{}, fp:[], fer:[], evt:{}, jefes}));
   b.set(col.doc("general"), {...docGeneral(), inicio:Date.now()});
   NUBE_BASE={}; guardarBase();
-  nubeEscribir(b.commit().then(()=>historial({otros:[`subió la programación inicial (${n} ${n===1?"mes":"meses"})`]})));
+  nubeEscribir(b.commit().then(()=>historial({otros:[`empezó de cero (${nomMes(k)} vacío)`]})));
 }
 
 /* ---- quién es: admin (Google) o usuario con legajo + clave ---- */
