@@ -155,12 +155,6 @@
   .ap-warn{color:#B45309;font-weight:700;margin:4px 0 6px}
   .ap-list{margin:0 0 10px;padding-left:18px;max-height:160px;overflow:auto;font-size:12px;line-height:1.45;color:#444}
   .ap-res-row{display:flex;justify-content:flex-end;gap:8px}
-  #datosPop{width:360px;font-size:13px;padding:14px}
-  .dt-sec{font-size:11px;font-weight:800;letter-spacing:.6px;color:var(--muted);margin:10px 0 4px;text-transform:uppercase}
-  .dt-op{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;line-height:1.35;margin:3px 0;cursor:pointer}
-  .dt-op input{margin-top:2px;accent-color:var(--accent)}
-  #datosPop .ap-row{margin-top:6px}
-  .jsonbtn{gap:6px}
   #regConfirm{width:270px;font-size:13px}
   #pegarPop{width:400px;max-width:calc(100vw - 32px);max-height:80vh;overflow:auto;font-size:13px;left:50%;top:14vh;transform:translateX(-50%);padding:14px}
   #pegarPop .pg-h{font-weight:800;font-size:14px;margin-bottom:8px}
@@ -442,7 +436,6 @@
       <button class="iconbtn aa" id="btnLetra" title="Cambiar el grosor de la letra de los códigos" aria-label="Grosor de letra">Aa</button>
       <button class="iconbtn" id="btnShare" title="Compartir imagen PNG" aria-label="Compartir imagen"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
       <button class="iconbtn" id="btnNube" title="Datos compartidos" aria-label="Datos compartidos"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 8.5a4.75 4.75 0 0 1-.5 9.5Z"/></svg><span class="nb-dot"></span></button>
-      <button class="tog jsonbtn" id="btnDatos" title="Exportar o importar los datos en un archivo JSON"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v12M3 12l4 4 4-4"/><path d="M17 20V8M13 12l4-4 4 4"/></svg>JSON</button>
       <button class="iconbtn" id="btnJefes" title="Agregar o quitar jefes" aria-label="Agregar o quitar jefes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M19 8v6M16 11h6"/></svg></button>
       <span class="tsep" id="sepPref"></span>
       <button class="tog prefbtn" id="btnPref" title="Hoja de preferencias de horario de cada jefe"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span id="btnPrefTxt">Preferencias</span></button>
@@ -473,21 +466,6 @@
   <p class="jp-note">Los cambios valen para este mes; los meses que crees después copian esta lista.</p>
 </div>
 <div id="errBar" style="display:none;position:fixed;left:12px;bottom:12px;z-index:99;max-width:520px;background:#7A1010;color:#fff;font:12px/1.4 monospace;padding:8px 10px;border-radius:8px"></div>
-<div class="pop" id="datosPop">
-  <div class="ap-h">Exportar / importar JSON</div>
-  <p class="ap-p">Los datos quedan guardados en este navegador. Con un archivo JSON los resguardás o los pasás a otro dispositivo (por ejemplo, del archivo suelto a la app de GitHub o al celular).</p>
-  <div class="dt-sec">Exportar</div>
-  <label class="dt-op"><input type="radio" name="dtAlc" value="todo" checked> Todo (meses, jefes y preferencias)</label>
-  <label class="dt-op"><input type="radio" name="dtAlc" value="mes"> Solo <b id="dtMesNom"></b></label>
-  <div class="ap-row"><button class="go" id="dtExp">Exportar JSON</button> <button id="dtCopy">Copiar texto</button></div>
-  <p class="ap-p" style="margin:4px 0 0">En el iPhone, “Exportar” abre el menú Compartir: elegí <b>Guardar en Archivos</b> o mandalo directo a otra app.</p>
-  <div class="dt-sec">Importar</div>
-  <label class="dt-op"><input type="radio" name="dtModo" value="combinar" checked> Combinar: agrega o actualiza los meses del archivo y deja los demás</label>
-  <label class="dt-op"><input type="radio" name="dtModo" value="reemplazar"> Reemplazar todo lo de este navegador</label>
-  <div class="ap-row"><button id="dtImp">Importar JSON…</button></div>
-  <input type="file" id="dtFile" accept=".json,application/json" style="display:none">
-  <p class="ap-p" id="dtMsg" style="margin-top:8px"></p>
-</div>
 <div class="pop" id="diasPop">
   <div class="dp-h" id="dpNom"></div>
   <div class="dp-s">Tildá los turnos que <b>solo</b> puede hacer cada día. Sin nada tildado = sin restricción. "No puede" = ese día va de franco.</div>
@@ -548,7 +526,7 @@ let roT=null;
 let MODOCOD="todos"; try{ MODOCOD=localStorage.getItem("jefes_modocod2")||"todos"; }catch(e){}
 const esRepetido=(p,d)=> d>1 && p.t[d-2]===p.t[d-1] && !EVT.has(d-1);
 const codCelda=(p,d)=>{ const c=p.t[d-1]; if(!c || MODOCOD==="todos" || !esRepetido(p,d)) return c; return MODOCOD==="suave" ? `<span class="rep">${c}</span>` : ""; };
-const VERSION="4.1 · 23/11/2026";
+const VERSION="4.2 · 23/11/2026";
 const DAYS = ["LU","MA","MI","JU","VI","SA","DO"];
 const MESES = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
 const MES_C = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
@@ -1117,6 +1095,7 @@ grid.addEventListener("click",e=>{
   let r=+td.dataset.r, d=cellDay(td,e.clientX);
   target={r,d}; SEL={r,d}; buf=""; marcarSel();
   pkHdr.textContent=`${people[r].nom} · ${dayAb(d)} ${d} — o tipeá la letra`;
+  { const q=typeof quienCambio==="function" ? quienCambio(people[r].leg,d) : ""; if(q) pkHdr.insertAdjacentHTML("beforeend",`<small class="pk-q">${esc(q)}</small>`); }
   dm.style.display="none";
   pk.style.display="block"; place(pk,e,230,170);
   e.stopPropagation();
@@ -1935,75 +1914,6 @@ document.addEventListener("mousedown",e=>{ if(ap.style.display==="block" && !ap.
 // casilleros que completó el programador: al editarlos a mano dejan de serlo
 function manual(leg,d){ const m=curMonth(); if(m && m.auto && m.auto[leg]) m.auto[leg]=m.auto[leg].filter(x=>x!==d); }
 
-/* ---- COPIA DE SEGURIDAD: exportar / importar todos los datos ---- */
-const dtp=document.getElementById("datosPop");
-document.getElementById("btnDatos").onclick=e=>{
-  if(dtp.style.display==="block"){ dtp.style.display="none"; return; }
-  document.getElementById("dtMsg").textContent="";
-  document.getElementById("dtMesNom").textContent=`${MESES[MO-1][0]+MESES[MO-1].slice(1).toLowerCase()} ${Y}`;
-  const r=e.currentTarget.getBoundingClientRect();
-  dtp.style.left=Math.max(8,Math.min(r.right-360, innerWidth-376))+"px"; dtp.style.top=(r.bottom+6)+"px"; dtp.style.display="block";
-};
-const hoyTxt=()=>{ const f=new Date(); return `${f.getFullYear()}-${String(f.getMonth()+1).padStart(2,"0")}-${String(f.getDate()).padStart(2,"0")}`; };
-function descargar(obj,nombre){
-  const blob=new Blob([JSON.stringify(obj,null,1)],{type:"application/json"});
-  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=nombre; document.body.appendChild(a); a.click();
-  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1500);
-}
-function armarExport(){
-  save();
-  const alc=document.querySelector('input[name="dtAlc"]:checked').value, k=keyOf(Y,MO);
-  if(alc==="mes") return {obj:{app:"programacion-jefes", tipo:"mes", version:1, meses:{[k]:STORE.meses[k]}, prefs:STORE.prefs, actual:k}, nombre:`jefes_${MESES[MO-1].toLowerCase()}_${Y}.json`};
-  return {obj:{...STORE, app:"programacion-jefes", tipo:"todo", version:1}, nombre:`jefes_datos_${hoyTxt()}.json`};
-}
-document.getElementById("dtExp").onclick=async()=>{
-  const {obj,nombre}=armarExport(), msg=document.getElementById("dtMsg");
-  // en celulares (iPhone) se usa el menú Compartir: permite "Guardar en Archivos" o mandarlo a otra app
-  try{
-    const file=new File([JSON.stringify(obj,null,1)], nombre, {type:"application/json"});
-    if(navigator.canShare && navigator.canShare({files:[file]}) && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)){
-      await navigator.share({files:[file], title:nombre});
-      msg.textContent=`Listo: ${nombre}.`; return;
-    }
-  }catch(e){ if(e && e.name==="AbortError"){ msg.textContent="Se canceló."; return; } }
-  descargar(obj,nombre);
-  msg.textContent=`Se descargó ${nombre}.`;
-};
-document.getElementById("dtCopy").onclick=async()=>{
-  const {obj,nombre}=armarExport(), msg=document.getElementById("dtMsg"), txt=JSON.stringify(obj);
-  try{ await navigator.clipboard.writeText(txt); msg.textContent=`Se copió el texto de ${nombre} (${Math.round(txt.length/1024)} KB). Pegalo donde lo necesites.`; }
-  catch(e){ msg.textContent="No se pudo copiar automáticamente en este navegador; usá Exportar."; }
-};
-document.getElementById("dtImp").onclick=()=>document.getElementById("dtFile").click();
-document.getElementById("dtFile").onchange=async e=>{
-  const f=e.target.files[0]; if(!f) return;
-  const msg=document.getElementById("dtMsg");
-  try{
-    const d=JSON.parse(await f.text());
-    if(!d || !d.meses || typeof d.meses!=="object" || !Object.keys(d.meses).every(k=>/^\d{4}-\d{2}$/.test(k)))
-      throw new Error("el archivo no es un JSON de esta app.");
-    const modo=document.querySelector('input[name="dtModo"]:checked').value;
-    save();
-    descargar(STORE, `jefes_respaldo_antes_de_importar_${hoyTxt()}.json`);   // por las dudas, copia de lo que había
-    migrarSinActual(d.meses);   // archivos de la versión anterior: queda el original
-    const meses=Object.keys(d.meses).sort();
-    if(modo==="reemplazar"){
-      STORE={meses:d.meses, prefs:d.prefs||{}, actual:d.actual, seedV:Math.max(d.seedV||1,3), colores:d.colores};
-    } else {
-      meses.forEach(k=>STORE.meses[k]=d.meses[k]);
-      STORE.prefs={...(STORE.prefs||{}), ...(d.prefs||{})};
-      if(d.colores) STORE.colores=d.colores;
-      STORE.seedV=Math.max(STORE.seedV||1,3);
-    }
-    persist();
-    const ir = d.actual && STORE.meses[d.actual] ? d.actual : meses[meses.length-1];
-    loadMonth(ir);
-    if(document.body.classList.contains("view-pref")) renderPrefs();
-    msg.textContent=`Importado (${modo==="reemplazar"?"reemplazando todo":"combinando"}): ${meses.length} ${meses.length===1?"mes":"meses"}. Se descargó una copia de lo que había antes.`;
-  }catch(err){ msg.textContent="No se pudo importar: "+err.message; }
-  e.target.value="";
-};
-document.addEventListener("mousedown",e=>{ if(dtp.style.display==="block" && !dtp.contains(e.target) && !e.target.closest("#btnDatos")) dtp.style.display="none"; });
 
 function terminarCorreccion(){
   if(!EDIT_ORIG) return;
@@ -2012,8 +1922,12 @@ function terminarCorreccion(){
   document.body.classList.remove("edit-orig"); render();
 }
 // mes registrado: tocar la planilla avisa que es solo lectura
-function avisoSoloLectura(){ const t=document.getElementById("roToast"); t.textContent="Mes registrado · solo lectura"; t.classList.add("on"); clearTimeout(roT); roT=setTimeout(()=>t.classList.remove("on"),1600); }
-document.getElementById("gridCard").addEventListener("click",()=>{ if(SOLO_LECT()) avisoSoloLectura(); },true);
+function avisoSoloLectura(q){ const t=document.getElementById("roToast"); t.textContent="Mes registrado · solo lectura"+(q?" · "+q:""); t.classList.add("on"); clearTimeout(roT); roT=setTimeout(()=>t.classList.remove("on"),q?3500:1600); }
+document.getElementById("gridCard").addEventListener("click",e=>{
+  if(!SOLO_LECT()) return;
+  const td=e.target.closest && e.target.closest("td.cell"), p=td && people[+td.dataset.r];
+  avisoSoloLectura(p && typeof quienCambio==="function" ? quienCambio(p.leg,+td.dataset.d) : "");
+},true);
 document.getElementById("btnPrint").onclick=imprimir;
 document.getElementById("btnShare").onclick=compartirImagen;
 window.addEventListener("beforeprint", buildPrint); // también si imprimen con Ctrl+P
@@ -2236,7 +2150,7 @@ loadMonth(STORE.meses[STORE.actual] ? STORE.actual : Object.keys(STORE.meses).so
     <p id="gtTxt"></p>
     <div id="gtForm">
       <div id="gtEntrar">
-        <input id="gtLeg" inputmode="numeric" autocomplete="username" placeholder="Legajo">
+        <input id="gtLeg" autocomplete="username" autocapitalize="words" placeholder="Tu nombre">
         <input id="gtClave" type="password" inputmode="numeric" autocomplete="current-password" maxlength="4" placeholder="Clave (4 números)">
         <button class="ok" id="gtOk">Entrar</button>
         <button class="gt-adm" id="gtAInv">Es la primera vez: tengo un código de invitación</button>
@@ -2263,13 +2177,30 @@ loadMonth(STORE.meses[STORE.actual] ? STORE.actual : Object.keys(STORE.meses).so
   <div id="nbAdm" style="display:none">
     <div class="nb-sub">Usuarios invitados</div>
     <div id="nbLista"></div>
-    <div class="nb-inv"><input id="nbNom" placeholder="Nombre" autocomplete="off"><input id="nbLeg" class="nb-leg" placeholder="Legajo" inputmode="numeric" autocomplete="off"><button class="ok" id="nbInvitar">Invitar</button></div>
+    <div class="nb-inv"><input id="nbNom" placeholder="Nombre del usuario" autocomplete="off"><button class="ok" id="nbInvitar">Invitar</button></div>
     <div id="nbNuevo"></div>
     <button class="nb-salir" id="nbSalir">Salir de la cuenta de administrador</button>
   </div>
+  <button class="nb-hist" id="nbHist">📜 Historial de cambios</button>
   <div class="row"><button id="nbCerrar">Cerrar</button></div>
 </div>
+<div class="pop" id="histPop">
+  <div class="nb-h">Historial de cambios</div>
+  <div id="hsLista"></div>
+  <div class="row"><button id="hsCerrar">Cerrar</button></div>
+</div>
 <style>
+  #histPop{width:460px;max-width:calc(100vw - 16px);font-size:13px;padding:14px;left:50%;top:8vh;transform:translateX(-50%)}
+  #histPop .nb-h{font-weight:800;font-size:14px;margin-bottom:8px}
+  #hsLista{max-height:70vh;overflow:auto;border:1px solid #DDE3EA;border-radius:8px}
+  .hs-it{padding:8px 10px;border-bottom:1px solid #EEF1F4;line-height:1.4}
+  .hs-it:last-child{border-bottom:0}
+  .hs-it .hs-c{color:#3A4655}
+  .hs-it summary{cursor:pointer;color:#1F4E79}
+  #histPop .row{display:flex;justify-content:flex-end;margin-top:10px}
+  #histPop .row button{height:32px;padding:0 12px;border-radius:8px;font:700 12px Inter,Arial,sans-serif;cursor:pointer;border:1px solid #C3CCD7;background:#fff}
+  .nb-hist{display:block;margin-top:10px;height:32px;padding:0 12px;border:1px solid #C3CCD7;border-radius:8px;background:#fff;cursor:pointer;font:600 12.5px Inter,Arial,sans-serif}
+  .pk-q{display:block;font-weight:500;color:#6B7685;margin-top:2px}
   #gate{position:fixed;inset:0;z-index:9000;background:var(--bg,#E4D8BE);display:flex;align-items:center;justify-content:center;padding:16px}
   .gt-card{background:#fff;border-radius:14px;box-shadow:0 10px 30px rgba(16,24,40,.18);padding:22px 24px;width:360px;max-width:100%;font:14px Inter,Arial,sans-serif;color:var(--ink,#1B2430)}
   .gt-card h2{margin:0 0 10px;font-size:18px}
@@ -2321,7 +2252,7 @@ const NUBE_CFG={apiKey:"AIzaSyC02jKcLlrN3-QLed2IwIVHyLEirCp5kRc",authDomain:"pro
   storageBucket:"programacionjefes.firebasestorage.app",messagingSenderId:"1034308042191",appId:"1:1034308042191:web:56aff714750281d30fe6ba"};
 const NUBE_ADMIN="guillermo.nemaric@gmail.com";
 const URL_APP="https://cuadraditos-vp.github.io/programar-jefes/";
-const C_DATOS="progr_jefes", C_INV="progr_invitados", C_USU="progr_usuarios", C_CTA="progr_cuentas";
+const C_DATOS="progr_jefes", C_INV="progr_invitados", C_USU="progr_usuarios", C_CTA="progr_cuentas", C_HIST="progr_historial";
 // cuenta de cada usuario: legajo + clave de 4 números (correo inventado; v cambia con cada clave nueva)
 const correoDe=(leg,v)=>`p${leg}-${v}@progrjefes.example.com`, passDe=(leg,cl)=>`vp${cl}-${leg}`;
 let nDb=null, nAuth=null, NUBE={rol:null, nombre:"", ok:false, estado:"", pend:0, error:false, desuscribir:null};
@@ -2385,25 +2316,47 @@ function nubeEscribir(p){
   p.then(()=>{ NUBE.error=false; }).catch(e=>{ NUBE.error=true; console.warn("nube:", e); if(e && e.code==="permission-denied") sinPermiso(); })
    .finally(()=>{ NUBE.pend--; nubeEstado(); });
 }
+// quién cambió cada casillero por última vez: NUBE_POR[mes][legajo][dN] = {n: nombre, t: cuándo}
+const NUBE_POR={};
+const nomJefe=(k,leg)=>{ const l=(STORE.meses[k]&&STORE.meses[k].jefes)||ROSTER_BASE; const j=l.find(x=>x.leg===leg); return j?j.nom:leg; };
+const nomMes=k=>{ const [y,m]=k.split("-").map(Number); return MESES[m-1][0]+MESES[m-1].slice(1).toLowerCase()+" "+y; };
+const QUE={fp:"francos patrón", fer:"feriados", evt:"eventos especiales", jefes:"lista de jefes"};
+function quienCambio(leg,d){
+  const x=((NUBE_POR[keyOf(Y,MO)]||{})[leg]||{})["d"+d]; if(!x) return "";
+  const f=new Date(x.t);
+  return `Último cambio: ${x.n} · ${f.toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit"})} ${f.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",hour12:false})}`;
+}
+function historial(entrada){
+  if(!nDb || !nAuth || !nAuth.currentUser) return;
+  nubeEscribir(nDb.collection(C_HIST).add({uid:nAuth.currentUser.uid, n:NUBE.nombre||"", t:Date.now(), ...entrada}));
+}
 function nubeMandar(){
   if(!NUBE.ok || !nDb) return;
-  const col=nDb.collection(C_DATOS);
+  const col=nDb.collection(C_DATOS), ahora=Date.now(), yo={n:NUBE.nombre||"", t:ahora};
   Object.keys(STORE.meses).forEach(k=>{
     const id="mes_"+k, L=aDoc(k,STORE.meses[k]), B=NUBE_BASE[id];
-    if(!B){ nubeEscribir(col.doc(id).set(L)); NUBE_BASE[id]=clon(L); return; }
-    const upd={};
+    if(!B){ nubeEscribir(col.doc(id).set(L)); NUBE_BASE[id]=clon(L); historial({mes:k, otros:["creó el mes"]}); return; }
+    const upd={}, celdas=[], otros=[];
     new Set([...Object.keys(L.t),...Object.keys(B.t||{})]).forEach(leg=>{ const l=L.t[leg]||{}, b=(B.t||{})[leg]||{};
-      new Set([...Object.keys(l),...Object.keys(b)]).forEach(dk=>{ if((l[dk]||"")!==(b[dk]||"")) upd[`t.${leg}.${dk}`]=l[dk]||""; }); });
-    CAMPOS.forEach(f=>{ if(!igual(L[f],B[f])) upd[f]=L[f]??null; });
-    if(Object.keys(upd).length){ nubeEscribir(col.doc(id).update(upd)); NUBE_BASE[id]=clon(L); }
+      new Set([...Object.keys(l),...Object.keys(b)]).forEach(dk=>{ if((l[dk]||"")===(b[dk]||"")) return;
+        upd[`t.${leg}.${dk}`]=l[dk]||""; upd[`por.${leg}.${dk}`]=yo;
+        ((NUBE_POR[k]=NUBE_POR[k]||{})[leg]=NUBE_POR[k][leg]||{})[dk]=yo;
+        celdas.push({j:nomJefe(k,leg), d:+dk.slice(1), de:b[dk]||"", a:l[dk]||""}); }); });
+    CAMPOS.forEach(f=>{ if(igual(L[f],B[f])) return; upd[f]=L[f]??null;
+      if(QUE[f]) otros.push("cambió "+QUE[f]);
+      if(f==="reg") otros.push(L.reg ? "registró el mes (quedó congelado)" : "abrió el mes"); });
+    if(Object.keys(upd).length){ nubeEscribir(col.doc(id).update(upd)); NUBE_BASE[id]=clon(L);
+      if(celdas.length || otros.length) historial({mes:k, celdas:celdas.slice(0,300), mas:Math.max(0,celdas.length-300), otros}); }
   });
   const L=docGeneral(), B=NUBE_BASE.general;
   if(B){
-    const upd={};
+    const upd={}, otros=[];
     new Set([...Object.keys(L.prefs),...Object.keys(B.prefs||{})]).forEach(leg=>{
-      if(!igual(L.prefs[leg],(B.prefs||{})[leg])) upd["prefs."+leg]= L.prefs[leg]!=null ? L.prefs[leg] : firebase.firestore.FieldValue.delete(); });
-    if(!igual(L.colores,B.colores)) upd.colores=L.colores??null;
-    if(Object.keys(upd).length){ nubeEscribir(col.doc("general").update(upd)); NUBE_BASE.general={...B, ...clon(L)}; }
+      if(igual(L.prefs[leg],(B.prefs||{})[leg])) return;
+      upd["prefs."+leg]= L.prefs[leg]!=null ? L.prefs[leg] : firebase.firestore.FieldValue.delete();
+      otros.push("cambió las preferencias de "+nomJefe(keyOf(Y,MO),leg)); });
+    if(!igual(L.colores,B.colores)){ upd.colores=L.colores??null; otros.push("cambió los colores"); }
+    if(Object.keys(upd).length){ nubeEscribir(col.doc("general").update(upd)); NUBE_BASE.general={...B, ...clon(L)}; historial({otros}); }
   }
   guardarBase();
 }
@@ -2450,6 +2403,7 @@ function recibir(snap){
     if(tieneBase) Object.keys(STORE.meses).forEach(k=>{ if(!meses[k] && !NUBE_BASE["mes_"+k]) meses[k]=STORE.meses[k]; });   // meses creados acá sin conexión
     const g=mezclarGeneral(tieneBase?NUBE_BASE.general:null, docGeneral(), docs.general);
     STORE.meses=meses; STORE.prefs=g.prefs||{}; if(g.colores) STORE.colores=g.colores; else delete STORE.colores;
+    Object.entries(docs).forEach(([id,R])=>{ if(id.startsWith("mes_")) NUBE_POR[id.slice(4)]=clon(R.por||{}); });
     NUBE_BASE=clon(docs); guardarBase(); guardarLocal();
     NUBE.ok=true; nubeEstado();
     if(!Object.keys(STORE.meses).length){ nubeMsg("No hay meses cargados."); return; }
@@ -2469,6 +2423,7 @@ function recibir(snap){
     }
     if(!id.startsWith("mes_")) return;
     const k=id.slice(4), L=STORE.meses[k] ? aDoc(k,STORE.meses[k]) : null;
+    NUBE_POR[k]=clon(R.por||{});
     const nuevo=mezclarMes(NUBE_BASE[id], L, R);
     if(!L || !igual(nuevo,L)){ STORE.meses[k]=deDoc(k,nuevo); cambio=true; }
     NUBE_BASE[id]=clon(R);
@@ -2480,21 +2435,27 @@ function escuchar(){
   if(NUBE.desuscribir) NUBE.desuscribir();
   NUBE.desuscribir=nDb.collection(C_DATOS).onSnapshot({includeMetadataChanges:true}, recibir, e=>{ if(e && e.code==="permission-denied") sinPermiso(); else { NUBE.error=true; nubeEstado(); } });
 }
+let subidaHecha=false;
 function ofrecerSubida(){
-  const n=Object.keys(STORE.meses).length;
-  if(!confirm(`Firebase todavía no tiene la programación.\n\n¿Subir la de esta computadora (${n} ${n===1?"mes":"meses"}, preferencias y colores) para que la usen todos?`)){ nubeMsg("Sin subir: los datos siguen solo en esta computadora."); return; }
+  if(subidaHecha) return; subidaHecha=true;   // una sola vez (el aviso del servidor puede llegar dos veces)
+  // se empieza de cero: un solo mes (el que viene) vacío, con la lista de jefes, preferencias y colores de esta computadora
+  const hoy=new Date(), k=keyOf(hoy.getMonth()===11?hoy.getFullYear()+1:hoy.getFullYear(), hoy.getMonth()===11?1:hoy.getMonth()+2);
+  const ult=Object.keys(STORE.meses).sort().pop(), jefes=(ult && STORE.meses[ult].jefes) ? STORE.meses[ult].jefes.map(j=>({...j})) : ROSTER_BASE.map(j=>({...j}));
+  if(!confirm(`Firebase todavía no tiene la programación.\n\n¿Empezar de cero? Se crea ${nomMes(k)} vacío, con la lista de jefes, las preferencias y los colores de esta computadora. Los meses viejos no se suben.`)){ subidaHecha=false; nubeMsg("Todavía no se empezó: tocá F5 para que lo vuelva a preguntar."); return; }
   const col=nDb.collection(C_DATOS), b=nDb.batch();
-  Object.keys(STORE.meses).forEach(k=>b.set(col.doc("mes_"+k), aDoc(k,STORE.meses[k])));
+  b.set(col.doc("mes_"+k), aDoc(k,{t:{}, fp:[], fer:[], evt:{}, jefes}));
   b.set(col.doc("general"), {...docGeneral(), inicio:Date.now()});
   NUBE_BASE={}; guardarBase();
-  nubeEscribir(b.commit());
+  nubeEscribir(b.commit().then(()=>historial({otros:[`empezó de cero (${nomMes(k)} vacío)`]})));
 }
 
 /* ---- quién es: admin (Google) o usuario con legajo + clave ---- */
-const gtTxtEntrar="Entrá con tu legajo y tu clave de 4 números.";
+const gtTxtEntrar="Entrá con tu nombre y tu clave de 4 números.";
+// el usuario se identifica por su nombre (sin acentos, mayúsculas ni espacios): "Juan Pérez" → "juanperez"
+const usuarioDe=t=>String(t||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
 function modoGate(m){
   ["gtEntrar","gtInv","gtNueva"].forEach(id=>document.getElementById(id).style.display = id===m ? "" : "none");
-  document.getElementById("gtTxt").textContent = m==="gtInv" ? "Escribí el código de invitación que te pasó el administrador." : m==="gtNueva" ? `Hola ${INV_ACT?INV_ACT.nombre:""}: elegí tu clave de 4 números. Con tu legajo (${INV_ACT?INV_ACT.leg:""}) y esa clave vas a entrar en cualquier computadora.` : gtTxtEntrar;
+  document.getElementById("gtTxt").textContent = m==="gtInv" ? "Escribí el código de invitación que te pasó el administrador." : m==="gtNueva" ? `Hola ${INV_ACT?INV_ACT.nombre:""}: elegí tu clave de 4 números. Con tu nombre y esa clave vas a entrar en cualquier computadora.` : gtTxtEntrar;
   document.getElementById("gtMsg").textContent="";
   const f={gtEntrar:"gtLeg",gtInv:"gtCod",gtNueva:"gtN1"}[m]; setTimeout(()=>document.getElementById(f).focus(),50);
 }
@@ -2511,7 +2472,7 @@ function sinPermiso(){
   modoGate("gtEntrar"); mostrarGate();
 }
 async function rolDe(user){
-  if(user.email && user.email.toLowerCase()===NUBE_ADMIN) return {rol:"admin", nombre:"Administrador"};
+  if(user.email && user.email.toLowerCase()===NUBE_ADMIN) return {rol:"admin", nombre:user.displayName||"Administrador"};
   if(user.isAnonymous) return null;
   const u=await nDb.collection(C_USU).doc(user.uid).get();
   if(!u.exists) return null;
@@ -2551,21 +2512,21 @@ if(!nAuth){
 const soloNum=id=>document.getElementById(id).value.replace(/\D/g,"");
 const gtMsg=t=>{ document.getElementById("gtMsg").textContent=t; };
 async function anonimo(){ if(!nAuth.currentUser) await nAuth.signInAnonymously(); return nAuth.currentUser; }
-// entrar con legajo + clave (en cualquier computadora)
+// entrar con nombre + clave (en cualquier computadora)
 document.getElementById("gtOk").onclick=async()=>{
-  const leg=soloNum("gtLeg"), cl=soloNum("gtClave");
-  if(!leg){ gtMsg("Escribí tu legajo."); return; }
+  const leg=usuarioDe(document.getElementById("gtLeg").value), cl=soloNum("gtClave");
+  if(!leg){ gtMsg("Escribí tu nombre."); return; }
   if(cl.length!==4){ gtMsg("La clave tiene 4 números."); return; }
   if(!nAuth){ gtMsg("Sin conexión. Probá de nuevo en un rato."); return; }
   gtMsg("Entrando…");
   try{
     await anonimo();
     const c=await nDb.collection(C_CTA).doc(leg).get();
-    if(!c.exists){ gtMsg("Ese legajo no tiene clave todavía. Si es la primera vez, usá el código de invitación."); return; }
+    if(!c.exists){ gtMsg("No hay nadie con ese nombre y clave. Escribilo como te invitó el administrador; si es la primera vez, usá el código de invitación."); return; }
     await nAuth.signInWithEmailAndPassword(correoDe(leg,c.data().v), passDe(leg,cl));
   }catch(e){
     const k=e&&e.code||"";
-    gtMsg(k==="auth/too-many-requests" ? "Demasiados intentos. Esperá unos minutos." : /wrong-password|invalid-credential|invalid-login|user-not-found/.test(k) ? "Clave incorrecta." : "No se pudo entrar ("+(k||e.message)+").");
+    gtMsg(k==="auth/too-many-requests" ? "Demasiados intentos. Esperá unos minutos." : /wrong-password|invalid-credential|invalid-login|user-not-found/.test(k) ? "Nombre o clave incorrectos." : "No se pudo entrar ("+(k||e.message)+").");
   }
 };
 // primera vez: código de invitación → elegir la clave
@@ -2663,7 +2624,7 @@ function dibujarUsuarios(invs, ctas){
   const f=t=>t?new Date(t).toLocaleDateString("es-AR"):"";
   document.getElementById("nbLista").innerHTML = l.length ? l.map(x=>{
     const ok = x.cta && x.inv && x.cta.v===x.inv.v;
-    const est = ok ? `Legajo ${x.leg} · 🔑 tiene clave (desde ${f(x.inv.usadoEn)})` : `Legajo ${x.leg} · código <b>${x.inv?x.inv.code:"?"}</b> · todavía no eligió la clave`;
+    const est = ok ? `🔑 tiene clave (desde ${f(x.inv.usadoEn)})` : `código <b>${x.inv?x.inv.code:"?"}</b> · todavía no eligió la clave`;
     return `<div class="nb-it"><div class="nb-n"><b>${esc(x.nombre||"(sin nombre)")}</b><small>${est}</small></div>${ok?`<button class="nb-cn" data-cn="${x.leg}">Clave nueva</button>`:""}<button data-q="${x.leg}">Quitar</button></div>`; }).join("")
     : '<div class="nb-vacio">Todavía no invitaste a nadie.</div>';
 }
@@ -2681,7 +2642,7 @@ async function invitar(nom, leg){
   const c=await codigoLibre();
   await nDb.collection(C_INV).doc(c).set({nombre:nom, leg:String(leg), v:Date.now(), creado:Date.now()});
   const link=URL_APP+"?inv="+c;
-  out.innerHTML=`<div class="nb-cod">Invitación para <b style="font-size:13px;letter-spacing:0">${esc(nom)}</b> (legajo ${esc(leg)})<br>Código: <b>${c}</b><br><small>La primera vez abre la app, toca «tengo un código de invitación», lo escribe y elige su clave de 4 números. Después entra con legajo y clave en cualquier computadora.</small><br><button id="nbCopiar">Copiar link</button></div>`;
+  out.innerHTML=`<div class="nb-cod">Invitación para <b style="font-size:13px;letter-spacing:0">${esc(nom)}</b><br>Código: <b>${c}</b><br><small>La primera vez abre la app, toca «tengo un código de invitación», lo escribe y elige su clave de 4 números. Después entra con su nombre (${esc(nom)}) y su clave en cualquier computadora.</small><br><button id="nbCopiar">Copiar link</button></div>`;
   document.getElementById("nbCopiar").onclick=()=>navigator.clipboard.writeText(link).then(()=>nubeMsg("Link copiado"),()=>nubeMsg(link));
 }
 document.getElementById("nbLista").addEventListener("click",async e=>{
@@ -2697,23 +2658,50 @@ document.getElementById("nbLista").addEventListener("click",async e=>{
   }
 });
 document.getElementById("nbInvitar").onclick=async()=>{
-  const nom=document.getElementById("nbNom").value.trim(), leg=document.getElementById("nbLeg").value.replace(/\D/g,""), out=document.getElementById("nbNuevo");
-  if(!nom){ out.innerHTML='<p style="color:#C00000">Escribí el nombre.</p>'; return; }
-  if(!leg){ out.innerHTML='<p style="color:#C00000">Escribí el legajo (o un número para identificarlo).</p>'; return; }
-  if(USR[leg] && USR[leg].cta){ out.innerHTML=`<p style="color:#C00000">El legajo ${leg} ya tiene clave. Si se la olvidó, tocá «Clave nueva».</p>`; return; }
+  const nom=document.getElementById("nbNom").value.trim().replace(/\s+/g," "), leg=usuarioDe(nom), out=document.getElementById("nbNuevo");
+  if(!leg){ out.innerHTML='<p style="color:#C00000">Escribí el nombre.</p>'; return; }
+  if(USR[leg] && USR[leg].cta){ out.innerHTML=`<p style="color:#C00000">Ya hay un usuario ${esc(USR[leg].nombre||nom)} con clave. Si se la olvidó, tocá «Clave nueva»; si es otra persona, agregale el apellido.</p>`; return; }
   try{
     if(USR[leg]) await borrarLegajo(leg);   // reemplaza un código que no se usó
     await invitar(nom, leg);
-    document.getElementById("nbNom").value=""; document.getElementById("nbLeg").value="";
+    document.getElementById("nbNom").value="";
   }catch(x){ out.innerHTML='<p style="color:#C00000">No se pudo crear la invitación.</p>'; }
 };
-document.getElementById("nbLeg").addEventListener("keydown",e=>{ if(e.key==="Enter") document.getElementById("nbInvitar").click(); });
 document.getElementById("nbNom").addEventListener("keydown",e=>{ if(e.key==="Enter") document.getElementById("nbInvitar").click(); });
 document.getElementById("nbSalir").onclick=async()=>{
   cerrarNube(); try{ localStorage.removeItem("progr_ok"); }catch(e){}
   NUBE.ok=false; if(NUBE.desuscribir){ NUBE.desuscribir(); NUBE.desuscribir=null; }
   await nAuth.signOut();
 };
+// historial: los últimos 150 cambios
+const hsPop=document.getElementById("histPop");
+document.getElementById("nbHist").onclick=async()=>{
+  cerrarNube(); hsPop.style.display="block";
+  const lista=document.getElementById("hsLista"); lista.innerHTML='<div class="nb-vacio">Cargando…</div>';
+  if(!nDb || !NUBE.ok){ lista.innerHTML='<div class="nb-vacio">Sin conexión.</div>'; return; }
+  try{
+    const s=await nDb.collection(C_HIST).orderBy("t","desc").limit(150).get();
+    const f=t=>{ const x=new Date(t); return x.toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit",year:"2-digit"})+" "+x.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",hour12:false}); };
+    const cel=c=>`${esc(c.j)} día ${c.d}: ${esc(c.de||"vacío")} → ${esc(c.a||"vacío")}`;
+    lista.innerHTML = s.docs.length ? s.docs.map(d=>{ const h=d.data(), cs=h.celdas||[];
+      let t=`<div class="hs-it"><b>${esc(h.n||"?")}</b> · ${f(h.t)}${h.mes?` · <b>${nomMes(h.mes)}</b>`:""}`;
+      (h.otros||[]).forEach(o=>t+=`<div class="hs-c">${esc(o)}</div>`);
+      if(cs.length){ const tot=cs.length+(h.mas||0);
+        t += tot<=4 ? cs.map(c=>`<div class="hs-c">${cel(c)}</div>`).join("")
+          : `<details><summary>cambió ${tot} casilleros</summary>${cs.map(c=>`<div class="hs-c">${cel(c)}</div>`).join("")}${h.mas?`<div class="hs-c">… y ${h.mas} más</div>`:""}</details>`; }
+      return t+"</div>"; }).join("") : '<div class="nb-vacio">Todavía no hay cambios.</div>';
+  }catch(e){ lista.innerHTML='<div class="nb-vacio">No se pudo leer el historial.</div>'; }
+};
+document.getElementById("hsCerrar").onclick=()=>{ hsPop.style.display="none"; };
+document.addEventListener("mousedown",e=>{ if(hsPop.style.display==="block" && !hsPop.contains(e.target) && !e.target.closest("#nbHist")) hsPop.style.display="none"; });
+// al pasar el mouse por un casillero: quién lo cambió por última vez
+document.getElementById("grid").addEventListener("mouseover",e=>{
+  const td=e.target.closest("td.cell"); if(!td) return;
+  if(td.dataset.t0===undefined) td.dataset.t0=td.getAttribute("title")||"";
+  const p=people[+td.dataset.r]; if(!p) return;
+  const q=quienCambio(p.leg,+td.dataset.d), t0=td.dataset.t0;
+  if(q) td.setAttribute("title", t0 ? t0+"\n"+q : q); else if(t0) td.setAttribute("title",t0); else td.removeAttribute("title");
+});
 nubeEstado();
 </script>
 </body>
