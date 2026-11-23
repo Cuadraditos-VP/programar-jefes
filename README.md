@@ -39,8 +39,6 @@ La programación (meses, turnos, jefes, preferencias y colores) se guarda en **F
 - El botón de la nube muestra un puntito: verde = todo guardado, amarillo = guardando, rojo = problema.
 - Las reglas de Firebase están en `REGLAS-FIREBASE.md`.
 
-El botón **JSON** sigue sirviendo para guardar una copia o importar meses.
-
 ## Actualizar la app
 
 Subí el `index.html` nuevo al repositorio (reemplazando el anterior) y en `sw.js` cambiá `VERSION` (por ejemplo de `jefes-v1.0` a `jefes-v1.1`). La próxima vez que se abra con internet, se actualiza sola.
